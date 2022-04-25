@@ -1,16 +1,28 @@
 <template>
   <div>
     <div class="date">
-      <el-button type="info" @click="setDateValueFun(0, '今天')">
+      <el-button
+        :type="data.btnHighlight == 0 ? 'primary' : 'info'"
+        @click="setDateValueFun(0, '今天')"
+      >
         今天
       </el-button>
-      <el-button type="info" @click="setDateValueFun(-1, '昨天')">
+      <el-button
+        :type="data.btnHighlight == -1 ? 'primary' : 'info'"
+        @click="setDateValueFun(-1, '昨天')"
+      >
         昨天
       </el-button>
-      <el-button type="info" @click="setDateValueFun(6, '最近七天')">
+      <el-button
+        :type="data.btnHighlight == 6 ? 'primary' : 'info'"
+        @click="setDateValueFun(6, '最近七天')"
+      >
         最近七天
       </el-button>
-      <el-button type="info" @click="setDateValueFun(29, '最近三十天')">
+      <el-button
+        :type="data.btnHighlight == 29 ? 'primary' : 'info'"
+        @click="setDateValueFun(29, '最近三十天')"
+      >
         最近三十天
       </el-button>
       <el-date-picker
@@ -44,6 +56,7 @@ import { getUserRecord } from "@/api/system/user.js";
 const data = reactive({
   tableData: [], //用户访问数据集
   dateValue: null, //时间选择器值
+  btnHighlight: 0, //按钮高亮
 });
 /**
  * btn时间选择
@@ -89,6 +102,8 @@ const setDateValueFun = (value, dateTitle) => {
       }
       break;
   }
+  data.btnHighlight = value; //高亮按钮
+  data.dateValue = null; //取消时间
   load(startDate, endDate, dateTitle);
 };
 /**
@@ -114,6 +129,7 @@ const dateChangeFun = () => {
       data.dateValue[1],
       startDateTitle + "至" + endDateTitle
     );
+    data.btnHighlight = null; //按钮取消高亮
   }
 };
 /**

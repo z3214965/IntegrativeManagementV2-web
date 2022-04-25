@@ -33,6 +33,7 @@ export default defineConfig(({ mode, command }) => {
         "/dev-api": {
           // target: `http://localhost:6001`,
           target: `http://192.168.1.56:5001`,
+          // target: `https://im.dilutech.com/prod-api`,
           // target: `http://192.168.1.53:5001`,
           // target: `http://222.128.104.87:5001`,
           changeOrigin: true,
