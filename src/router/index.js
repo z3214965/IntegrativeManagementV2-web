@@ -36,7 +36,17 @@ export const constantRoutes = [
   },
   {
     path: "/login",
-    component: () => import("@/views/login"),
+    component: () => import("@/views/system/loginInfor/login"),
+    hidden: true,
+  },
+  {
+    path: "/userReg",
+    component: () => import("@/views/system/loginInfor/userRegistration"),
+    hidden: true,
+  },
+  {
+    path: "/passWordRetrieve",
+    component: () => import("@/views/system/loginInfor/passWordRetrieve"),
     hidden: true,
   },
   {

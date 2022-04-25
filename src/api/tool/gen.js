@@ -74,3 +74,20 @@ export function synchDb(tableName) {
     method: 'get'
   })
 }
+
+// 手机获取验证码
+export function getALYCode(tableName) {
+  return request({
+    url: "/dl/sms/v1/smss/" + tableName,
+    method: "get"
+  });
+}
+
+//通过手机号修改密码
+export function resetPassWordByPhone(data) {
+  return request({
+    url: "/system/user/resetPwdByPhone",
+    method: "put",
+    data
+  });
+}

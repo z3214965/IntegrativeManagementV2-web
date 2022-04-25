@@ -1,11 +1,15 @@
 <template>
-  <div class="app-container">综合管理系统</div>
+  <div class="app-container">
+    <datum-indicator />
+  </div>
 </template>
 
-<script setup name="Index">
-function goTarget(url) {
-  window.open(url, "__blank");
-}
+<script setup name="appContainer">
+import DatumIndicator from "@/components/DatumIndicator";
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.app-container {
+  padding: 20px;
+}
+</style>

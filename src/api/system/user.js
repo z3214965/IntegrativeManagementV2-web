@@ -125,3 +125,20 @@ export function updateAuthRole(data) {
     params: data,
   });
 }
+
+// 注册用户
+export function registeredUser(data) {
+  return request({
+    url: "/system/user/registeredUser",
+    method: "post",
+    data: data,
+  });
+}
+
+//获取N天内用户使用记录
+export const getUserRecord = () => {
+  return request({
+    url: "/dl/im/v1/statistics/sys-user-use/300",
+    method: "get",
+  });
+};

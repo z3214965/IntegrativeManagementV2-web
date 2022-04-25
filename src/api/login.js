@@ -57,3 +57,12 @@ export function getCodeImg() {
     timeout: 20000
   })
 }
+
+//获取注册行业
+export function getIndustry() {
+  return request({
+    url: "system/dict/profession/list",
+    method: "get",
+    timeout: 20000,
+  });
+}
