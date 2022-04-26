@@ -1,11 +1,5 @@
 <template>
-  <el-image
-    :src="`${realSrc}`"
-    fit="cover"
-    :style="`width:${realWidth};height:${realHeight};`"
-    :preview-src-list="realSrcList"
-    append-to-body="true"
-  >
+  <el-image :src="`${realSrc}`" fit="cover" :style="`width:${realWidth};height:${realHeight};`" :preview-src-list="realSrcList" append-to-body="true">
     <template #error>
       <div class="image-slot">
         <el-icon><picture-filled /></el-icon>
@@ -15,25 +9,25 @@
 </template>
 
 <script setup>
-import { isExternal } from "@/utils/validate";
+import { isExternal } from '@/utils/validate';
 
 const props = defineProps({
   src: {
     type: String,
-    required: true
+    required: true,
   },
   width: {
     type: [Number, String],
-    default: ""
+    default: '',
   },
   height: {
     type: [Number, String],
-    default: ""
-  }
+    default: '',
+  },
 });
 
 const realSrc = computed(() => {
-  let real_src = props.src.split(",")[0];
+  let real_src = props.src.split(',')[0];
   if (isExternal(real_src)) {
     return real_src;
   }
@@ -41,9 +35,9 @@ const realSrc = computed(() => {
 });
 
 const realSrcList = computed(() => {
-  let real_src_list = props.src.split(",");
+  let real_src_list = props.src.split(',');
   let srcList = [];
-  real_src_list.forEach(item => {
+  real_src_list.forEach((item) => {
     if (isExternal(item)) {
       return srcList.push(item);
     }
@@ -52,13 +46,9 @@ const realSrcList = computed(() => {
   return srcList;
 });
 
-const realWidth = computed(() =>
-  typeof props.width == "string" ? props.width : `${props.width}px`
-);
+const realWidth = computed(() => (typeof props.width == 'string' ? props.width : `${props.width}px`));
 
-const realHeight = computed(() =>
-  typeof props.height == "string" ? props.height : `${props.height}px`
-);
+const realHeight = computed(() => (typeof props.height == 'string' ? props.height : `${props.height}px`));
 </script>
 
 <style lang="scss" scoped>

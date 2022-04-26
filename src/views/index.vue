@@ -5,7 +5,7 @@
 </template>
 
 <script setup name="appContainer">
-import DatumIndicator from "@/components/DatumIndicator";
+import DatumIndicator from '@/components/DatumIndicator';
 </script>
 
 <style scoped lang="scss">

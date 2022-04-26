@@ -28,9 +28,7 @@
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="tree" />所属部门
-                <div class="pull-right" v-if="state.user.dept">
-                  {{ state.user.dept.deptName }} / {{ state.postGroup }}
-                </div>
+                <div class="pull-right" v-if="state.user.dept">{{ state.user.dept.deptName }} / {{ state.postGroup }}</div>
               </li>
               <li class="list-group-item">
                 <svg-icon icon-class="peoples" />所属角色
@@ -66,12 +64,12 @@
 </template>
 
 <script setup name="Profile">
-import userAvatar from "./userAvatar";
-import userInfo from "./userInfo";
-import resetPwd from "./resetPwd";
-import { getUserProfile } from "@/api/system/user";
+import userAvatar from './userAvatar';
+import userInfo from './userInfo';
+import resetPwd from './resetPwd';
+import { getUserProfile } from '@/api/system/user';
 
-const activeTab = ref("userinfo");
+const activeTab = ref('userinfo');
 const state = reactive({
   user: {},
   roleGroup: {},
