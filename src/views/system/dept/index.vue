@@ -228,7 +228,6 @@ function handleUpdate(row) {
   });
   getDept(row.deptId).then((response) => {
     form.value = response.data;
-    form.value.orderNum = Number(form.value.orderNum);
     open.value = true;
     title.value = '修改部门';
   });
