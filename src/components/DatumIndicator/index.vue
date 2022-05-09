@@ -111,7 +111,6 @@ const setDateValueFun = (value, dateTitle) => {
  */
 const dateChangeFun = () => {
   if (data.dateValue) {
-    let dateValue = data.dateValue[1] - data.dateValue[0];
     let endDateTitle =
       data.dateValue[1].getFullYear() +
       "-" +
@@ -124,11 +123,15 @@ const dateChangeFun = () => {
       (data.dateValue[0].getMonth() + 1) +
       "-" +
       data.dateValue[0].getDate();
-    load(
-      data.dateValue[0],
-      data.dateValue[1],
-      startDateTitle + "至" + endDateTitle
+    let dataValue = new Date(
+      data.dateValue[1].getFullYear(),
+      data.dateValue[1].getMonth() + 1,
+      data.dateValue[1].getDate() + 1
     );
+    dataValue.setHours(23);
+    dataValue.setMinutes(59);
+    dataValue.setSeconds(59);
+    load(data.dateValue[0], dataValue, startDateTitle + "至" + endDateTitle);
     data.btnHighlight = null; //按钮取消高亮
   }
 };
