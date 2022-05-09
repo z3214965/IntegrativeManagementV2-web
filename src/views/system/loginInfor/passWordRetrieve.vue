@@ -1,64 +1,31 @@
-// 用户修改密码界面 by 张艺译 20210501
-
 <template>
   <div class="PhoneRetrieve">
     <h1>迪路科技</h1>
     <div id="contentDiv">
       <div id="registerDiv">
-        <span style="font-size: 25px; color: #373d41; padding: 20px 0">
-          重置密码
-        </span>
+        <span style="font-size: 25px; color: #373d41; padding: 20px 0"> 重置密码 </span>
         <form style="width: 300px" ref="form">
           <div class="label">输入手机号</div>
           <label>
             <div class="input-group__append">+86</div>
-            <input
-              v-model="data.form.cellPhoneNumber"
-              placeholder="暂不支持大陆地区以外的手机号"
-            />
+            <input v-model="data.form.cellPhoneNumber" placeholder="暂不支持大陆地区以外的手机号" />
           </label>
           <div class="label">输入验证码</div>
           <label>
             <div class="verificationCode">
-              <input
-                v-model="data.form.verificationCode"
-                placeholder="6位数字"
-              />
-              <button
-                style="
-                  width: 140px;
-                  margin-left: 5px;
-                  background: rgba(85, 85, 85, 1);
-                "
-                type="primary"
-                @click.prevent="btnValueFun"
-              >
+              <input v-model="data.form.verificationCode" placeholder="6位数字" />
+              <button style="width: 140px; margin-left: 5px; background: rgba(85, 85, 85, 1)" type="primary" @click.prevent="btnValueFun">
                 {{ data.btnValue }}
               </button>
             </div>
           </label>
           <div class="label">设置新密码</div>
           <label>
-            <input
-              v-model="data.form.newPassWord"
-              show-password
-              placeholder="至少8位，可包含任意字符"
-            />
+            <input v-model="data.form.newPassWord" show-password placeholder="至少8位，可包含任意字符" />
           </label>
-          <button
-            type="primary"
-            @click.prevent="submitForm('form')"
-            style="width: 100%; background: rgba(85, 85, 85, 1)"
-          >
-            提交
-          </button>
+          <button type="primary" @click.prevent="submitForm('form')" style="width: 100%; background: rgba(85, 85, 85, 1)">提交</button>
           <label>
-            <span
-              style="color: #40a9ff; cursor: pointer; font-size: 14px"
-              @click.prevent="loginFun()"
-            >
-              去登录
-            </span>
+            <span style="color: #40a9ff; cursor: pointer; font-size: 14px" @click.prevent="loginFun()"> 去登录 </span>
           </label>
         </form>
       </div>
@@ -70,8 +37,8 @@
 </template>
 
 <script setup name="PhoneRetrieve">
-import { getALYCode, resetPassWordByPhone } from "@/api/tool/gen";
-import { getToken, setToken } from "@/utils/auth";
+import { getALYCode, resetPassWordByPhone } from '@/api/tool/gen';
+import { getToken, setToken } from '@/utils/auth';
 
 const route = useRoute();
 const router = useRouter();
@@ -84,12 +51,12 @@ const data = reactive({
     verificationCode: null, //验证码
     newPassWord: null, //新密码
   },
-  btnValue: "获取验证码",
+  btnValue: '获取验证码',
   ALYCode: null, //阿里云获取到的验证码
   message: null, //修改完后提示消息
 });
 const load = () => {
-  let ALYCode = localStorage.getItem("DLverificationCode");
+  let ALYCode = localStorage.getItem('DLverificationCode');
   if (ALYCode) {
     data.ALYCode = parseInt(ALYCode);
   }
@@ -100,32 +67,28 @@ const load = () => {
 const submitForm = () => {
   //手机号验证
   if (!data.form.cellPhoneNumber) {
-    proxy.$message.warning("请输入手机号！");
+    proxy.$message.warning('请输入手机号！');
     return;
   }
   if (!isCellPhone(data.form.cellPhoneNumber)) {
-    proxy.$message.warning("请输入正确的手机号！");
+    proxy.$message.warning('请输入正确的手机号！');
     return;
   }
   //密码验证
   if (!data.form.newPassWord) {
-    proxy.$message.warning("密码不能为空！");
+    proxy.$message.warning('密码不能为空！');
     return;
   }
   if (!/^(\w){8,20}$/.test(data.form.newPassWord)) {
-    proxy.$message.warning("请输入8-20位字符的密码！");
+    proxy.$message.warning('请输入8-20位字符的密码！');
     return;
   }
   //最后验证验证码
-  if (
-    data.form.verificationCode &&
-    data.ALYCode + 1234 == data.form.verificationCode &&
-    data.form.verificationCode != 1234
-  ) {
-    localStorage.removeItem("DLverificationCode");
+  if (data.form.verificationCode && data.ALYCode + 1234 == data.form.verificationCode && data.form.verificationCode != 1234) {
+    localStorage.removeItem('DLverificationCode');
     editPassWord();
   } else {
-    proxy.$message.warning("验证码输入错误！请重新输入");
+    proxy.$message.warning('验证码输入错误！请重新输入');
   }
 };
 /**
@@ -144,34 +107,34 @@ const isCellPhone = (val) => {
  */
 const btnValueFun = async () => {
   if (!data.form.cellPhoneNumber) {
-    proxy.$message.info("请输入手机号码获取验证码!");
+    proxy.$message.info('请输入手机号码获取验证码!');
     return;
   }
   if (!/^1[3|4|5|6|7|8|9][0-9]\d{8}$/.test(data.form.cellPhoneNumber)) {
-    proxy.$message.warning("请输入正确的手机号!");
+    proxy.$message.warning('请输入正确的手机号!');
     return;
   }
   let token = await getToken();
   if (token) {
-    await store.dispatch("LogOut");
+    await store.dispatch('LogOut');
   }
   if (!data.interval && data.form.cellPhoneNumber) {
-    let ALYCode = await getALYCode(data.form.cellPhoneNumber + "/2");
+    let ALYCode = await getALYCode(data.form.cellPhoneNumber + '/2');
     if (ALYCode.code === 200) {
       data.ALYCode = ALYCode.data;
-      localStorage.setItem("DLverificationCode", ALYCode.data);
+      localStorage.setItem('DLverificationCode', ALYCode.data);
     }
     if (ALYCode.code === 500) {
-      proxy.$message.warning("获取验证码次数过多！请稍侯获取");
+      proxy.$message.warning('获取验证码次数过多！请稍侯获取');
     }
     let date = 60;
-    data.btnValue = date + "s";
+    data.btnValue = date + 's';
     data.interval = setInterval((_) => {
       date--;
-      data.btnValue = date + "s";
+      data.btnValue = date + 's';
       if (date === 0) {
         clearInterval(data.interval);
-        data.btnValue = "重新获取";
+        data.btnValue = '重新获取';
         data.interval = null;
       }
     }, 1000);
@@ -205,7 +168,7 @@ const editPassWord = async () => {
 const loginFun = (token) => {
   if (!token) {
     router.push({
-      path: "/login",
+      path: '/login',
       query: {
         type: route.query.type,
         callback: route.query.callback,
@@ -216,24 +179,18 @@ const loginFun = (token) => {
     if (route.query.type) {
       type = route.query.type;
       switch (type) {
-        case "h5-vp":
-          window.open(
-            decodeURIComponent(route.query.callback) + "?token=" + token,
-            "_top"
-          );
+        case 'h5-vp':
+          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
           break;
-        case "web-vp":
-        case "web-dm":
-          window.open(
-            decodeURIComponent(route.query.callback) + "?token=" + token,
-            "_top"
-          );
+        case 'web-vp':
+        case 'web-dm':
+          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
           break;
       }
     } else {
       setToken(token); //cookie
       store.state.user.token = token;
-      router.push({ path: "/index" });
+      router.push({ path: '/index' });
     }
   }
 };

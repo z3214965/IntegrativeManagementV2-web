@@ -12,12 +12,7 @@
       </el-tooltip>
     </el-row>
     <el-dialog :title="title" v-model="open" append-to-body>
-      <el-transfer
-        :titles="['显示', '隐藏']"
-        v-model="value"
-        :data="columns"
-        @change="dataChange"
-      ></el-transfer>
+      <el-transfer :titles="['显示', '隐藏']" v-model="value" :data="columns" @change="dataChange"></el-transfer>
     </el-dialog>
   </div>
 </template>
@@ -31,25 +26,25 @@ const props = defineProps({
   columns: {
     type: Array,
   },
-})
+});
 
 const emits = defineEmits(['update:showSearch', 'queryTable']);
 
 // 显隐数据
 const value = ref([]);
 // 弹出层标题
-const title = ref("显示/隐藏");
+const title = ref('显示/隐藏');
 // 是否显示弹出层
 const open = ref(false);
 
 // 搜索
 function toggleSearch() {
-  emits("update:showSearch", !props.showSearch);
+  emits('update:showSearch', !props.showSearch);
 }
 
 // 刷新
 function refresh() {
-  emits("queryTable");
+  emits('queryTable');
 }
 
 // 右侧列表元素变化
@@ -73,7 +68,7 @@ for (let item in props.columns) {
 }
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 :deep(.el-transfer__button) {
   border-radius: 50%;
   display: block;

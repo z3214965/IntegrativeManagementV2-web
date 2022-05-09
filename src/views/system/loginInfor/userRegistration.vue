@@ -1,13 +1,9 @@
-// 用户注册界面 by 张艺译 20210501
-
 <template>
   <div id="parentDiv">
     <h1>迪路科技</h1>
     <div id="contentDiv">
       <div id="registerDiv">
-        <span style="font-size: 25px; color: #373d41; padding: 20px 0">
-          账号注册
-        </span>
+        <span style="font-size: 25px; color: #373d41; padding: 20px 0"> 账号注册 </span>
         <form ref="registerInfor">
           <div class="label">输入手机号</div>
           <label>
@@ -18,32 +14,16 @@
           <label>
             <div class="verificationCode">
               <input v-model.trim="data.userInfo.verificationCode" />
-              <button
-                style="
-                  width: 140px;
-                  margin-left: 5px;
-                  background: rgba(85, 85, 85, 1);
-                "
-                type="primary"
-                @click.prevent="btnValueFun"
-              >
+              <button style="width: 140px; margin-left: 5px; background: rgba(85, 85, 85, 1)" type="primary" @click.prevent="btnValueFun">
                 {{ data.btnValue }}
               </button>
             </div>
           </label>
-          <div
-            style="font-size: 14px; margin-bottom: 15px"
-            tabindex="-1"
-            @blur="eventListener"
-          >
+          <div style="font-size: 14px; margin-bottom: 15px" tabindex="-1" @blur="eventListener">
             <div class="label">行业类型</div>
             <div class="distpicker" @click.stop>
               <!-- 选择框 -->
-              <div
-                class="input-text"
-                :class="{ selectActive: data.multistageUUID }"
-                @click="toSelectArea"
-              >
+              <div class="input-text" :class="{ selectActive: data.multistageUUID }" @click="toSelectArea">
                 <div>
                   <span>{{ data.industryCategories }}</span>
                   <span>{{ data.industryOfSmall }}</span>
@@ -52,10 +32,7 @@
               </div>
               <div class="multistage" v-if="data.multistageUUID">
                 <!-- 行业大类 -->
-                <div
-                  class="options country-options"
-                  v-show="data.industryCategoriesUUID"
-                >
+                <div class="options country-options" v-show="data.industryCategoriesUUID">
                   <ul>
                     <li
                       class="select-options"
@@ -65,17 +42,12 @@
                       @click="selectCountry(cony.name, true)"
                     >
                       <span>{{ cony.name }}</span>
-                      <span v-if="cony.children.length > 0" class="icon">
-                        >
-                      </span>
+                      <span v-if="cony.children.length > 0" class="icon"> > </span>
                     </li>
                   </ul>
                 </div>
                 <!-- 行业小类 -->
-                <div
-                  class="options province-options"
-                  v-show="data.industryOfSmallUUID"
-                >
+                <div class="options province-options" v-show="data.industryOfSmallUUID">
                   <ul>
                     <li
                       class="select-options"
@@ -93,21 +65,10 @@
           </div>
           <label>
             <div class="flexBox">
-              <button
-                :disabled="data.disabled"
-                @click.prevent="submitForm('registerInfor')"
-                style="background: rgba(85, 85, 85, 1)"
-              >
-                立即注册
-              </button>
+              <button :disabled="data.disabled" @click.prevent="submitForm('registerInfor')" style="background: rgba(85, 85, 85, 1)">立即注册</button>
               <span style="font-size: 14px">
                 (已有账号)
-                <span
-                  @click.prevent="loginFun()"
-                  style="color: #40a9ff; cursor: pointer"
-                >
-                  去登录
-                </span>
+                <span @click.prevent="loginFun()" style="color: #40a9ff; cursor: pointer"> 去登录 </span>
               </span>
             </div>
           </label>
@@ -119,11 +80,7 @@
               v-model="data.userInfo.clause"
               value="《网站服务条款》|《法律声明和隐私权政策》"
             />
-            <label
-              :style="{ color: data.userInfo.clause ? '#1890ff' : '#000' }"
-              style="font-size: 14px; margin: 0; user-select: none"
-              for="cbox2"
-            >
+            <label :style="{ color: data.userInfo.clause ? '#1890ff' : '#000' }" style="font-size: 14px; margin: 0; user-select: none" for="cbox2">
               《网站服务条款》|《法律声明和隐私权政策》
             </label>
           </label>
@@ -135,10 +92,10 @@
 </template>
 
 <script setup name="UserRegistration">
-import { registeredUser } from "@/api/system/user.js";
-import { getALYCode } from "@/api/tool/gen.js";
-import { getIndustry } from "@/api/login.js";
-import { setToken, getToken } from "@/utils/auth";
+import { registeredUser } from '@/api/system/user.js';
+import { getALYCode } from '@/api/tool/gen.js';
+import { getIndustry } from '@/api/login.js';
+import { setToken, getToken } from '@/utils/auth';
 
 const route = useRoute();
 const router = useRouter();
@@ -147,27 +104,27 @@ const { proxy } = getCurrentInstance();
 
 const data = reactive({
   userInfo: {
-    userName: "", // 用户名
-    password: "", // 密码
-    phonenumber: "", // 手机号
-    clause: "", // 协议
-    verificationCode: "", //验证码
+    userName: '', // 用户名
+    password: '', // 密码
+    phonenumber: '', // 手机号
+    clause: '', // 协议
+    verificationCode: '', //验证码
     professionId: null, //行业id
   },
-  btnValue: "获取验证码",
+  btnValue: '获取验证码',
   ALYCode: null, //阿里云获取到的验证码
   disabled: false, //注册按钮禁用标识符
   message: null, //注册完后提示消息
   multistageUUID: false, //多级联动显隐
   industryData: [], //行业数据
-  industryCategories: "", //选中的行业大类
-  industryOfSmall: "", //选中的行业小类
+  industryCategories: '', //选中的行业大类
+  industryOfSmall: '', //选中的行业小类
   industryCategoriesUUID: false, //行业大类list显隐
   industryCategoriesList: [], //行业小类list
   industryOfSmallUUID: false, //行业小类显隐
 });
 const load = () => {
-  let ALYCode = localStorage.getItem("DLverificationCodeRegister");
+  let ALYCode = localStorage.getItem('DLverificationCodeRegister');
   if (ALYCode) {
     data.ALYCode = parseInt(ALYCode);
   }
@@ -181,9 +138,7 @@ const load = () => {
           children: [],
         });
       } else {
-        let indexValue = data.industryData.findIndex(
-          (item) => item.id == v.parentId
-        );
+        let indexValue = data.industryData.findIndex((item) => item.id == v.parentId);
         if (indexValue != -1) {
           data.industryData[indexValue].children.push({
             name: v.name,
@@ -197,31 +152,27 @@ const load = () => {
 const submitForm = () => {
   try {
     if (!data.userInfo.professionId) {
-      proxy.$message.warning("请选择完整的行业类型");
+      proxy.$message.warning('请选择完整的行业类型');
       return;
     }
     if (!data.userInfo.phonenumber) {
-      proxy.$message.warning("请输入手机号");
+      proxy.$message.warning('请输入手机号');
       return;
     }
     if (!/^1[3|4|5|6|7|8|9][0-9]\d{8}$/.test(data.userInfo.phonenumber)) {
-      proxy.$message.warning("请输入正确的手机号!");
+      proxy.$message.warning('请输入正确的手机号!');
       return;
     }
     if (!data.userInfo.verificationCode) {
-      proxy.$message.warning("请输入验证码");
+      proxy.$message.warning('请输入验证码');
       return;
     }
-    if (
-      !data.ALYCode ||
-      data.userInfo.verificationCode != data.ALYCode + 1234 ||
-      data.userInfo.verificationCode == 1234
-    ) {
-      proxy.$message.warning("验证码错误!请重新输入");
+    if (!data.ALYCode || data.userInfo.verificationCode != data.ALYCode + 1234 || data.userInfo.verificationCode == 1234) {
+      proxy.$message.warning('验证码错误!请重新输入');
       return;
     }
     if (!data.userInfo.clause) {
-      proxy.$message.warning("请勾选协议!!!");
+      proxy.$message.warning('请勾选协议!!!');
       return;
     }
     data.disabled = true;
@@ -236,11 +187,11 @@ const submitForm = () => {
     })
       .then((response) => {
         setToken(response.data);
-        localStorage.removeItem("DLverificationCodeRegister");
+        localStorage.removeItem('DLverificationCodeRegister');
         proxy.$message({
           showClose: true,
-          message: "注册成功！",
-          type: "success",
+          message: '注册成功！',
+          type: 'success',
           onClose: () => {
             let date = 2;
             data.message = `账号注册成功,${date}秒后自动关闭此页面，跳转至平台界面`;
@@ -257,7 +208,7 @@ const submitForm = () => {
       })
       .catch((err) => {
         data.disabled = false;
-        localStorage.removeItem("DLverificationCodeRegister");
+        localStorage.removeItem('DLverificationCodeRegister');
       });
   } catch (error) {
     data.disabled = false;
@@ -270,34 +221,34 @@ const submitForm = () => {
  */
 const btnValueFun = async () => {
   if (!data.userInfo.phonenumber) {
-    proxy.$message.warning("请输入手机号码获取验证码!");
+    proxy.$message.warning('请输入手机号码获取验证码!');
     return;
   }
   if (!/^1[3|4|5|6|7|8|9][0-9]\d{8}$/.test(data.userInfo.phonenumber)) {
-    proxy.$message.warning("请输入正确的手机号!");
+    proxy.$message.warning('请输入正确的手机号!');
     return;
   }
   let token = await getToken();
   if (token) {
-    await store.dispatch("LogOut");
+    await store.dispatch('LogOut');
   }
   if (!data.interval && data.userInfo.phonenumber) {
-    let ALYCode = await getALYCode(data.userInfo.phonenumber + "/1");
-    if (ALYCode.code == "200") {
+    let ALYCode = await getALYCode(data.userInfo.phonenumber + '/1');
+    if (ALYCode.code == '200') {
       data.ALYCode = ALYCode.data;
-      localStorage.setItem("DLverificationCodeRegister", ALYCode.data);
+      localStorage.setItem('DLverificationCodeRegister', ALYCode.data);
     }
-    if (ALYCode.code == "500") {
-      proxy.$message.warning("获取验证码次数过多！请稍侯获取");
+    if (ALYCode.code == '500') {
+      proxy.$message.warning('获取验证码次数过多！请稍侯获取');
     }
     let date = 60;
-    data.btnValue = date + "s";
+    data.btnValue = date + 's';
     data.interval = setInterval((_) => {
       date--;
-      data.btnValue = date + "s";
+      data.btnValue = date + 's';
       if (date === 0) {
         clearInterval(data.interval);
-        data.btnValue = "重新获取";
+        data.btnValue = '重新获取';
         data.interval = null;
       }
     }, 1000);
@@ -309,7 +260,7 @@ const btnValueFun = async () => {
 const loginFun = (token) => {
   if (!token) {
     router.push({
-      path: "/login",
+      path: '/login',
       query: {
         type: route.query.type,
         callback: route.query.callback,
@@ -320,24 +271,18 @@ const loginFun = (token) => {
     let type = route.query.type;
     if (type) {
       switch (type) {
-        case "h5-vp":
-          window.open(
-            decodeURIComponent(route.query.callback) + "?token=" + token,
-            "_top"
-          );
+        case 'h5-vp':
+          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
           break;
-        case "web-vp":
-        case "web-dm":
-          window.open(
-            decodeURIComponent(route.query.callback) + "?token=" + token,
-            "_top"
-          );
+        case 'web-vp':
+        case 'web-dm':
+          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
           break;
       }
     } else {
       setToken(token); //cookie
       store.state.user.token = token; //$store
-      router.push({ path: "/index" });
+      router.push({ path: '/index' });
     }
   }
 };
@@ -358,8 +303,8 @@ const toSelectArea = () => {
  * 选择第一大类
  */
 const selectCountry = (industryCategories) => {
-  if (industryCategories === "") {
-    data.industryCategories = "不限";
+  if (industryCategories === '') {
+    data.industryCategories = '不限';
   } else {
     data.industryCategories = industryCategories;
   }
@@ -374,7 +319,7 @@ const selectCountry = (industryCategories) => {
   } else {
     data.industryOfSmallUUID = true;
   }
-  data.industryOfSmall = "";
+  data.industryOfSmall = '';
 };
 //选择第二小类
 const selectProvince = (pro, isClose) => {
@@ -389,7 +334,7 @@ const selectProvince = (pro, isClose) => {
 //下拉菜单的收起
 const eventListener = () => {
   data.multistageUUID = false;
-  data.searchCity = "";
+  data.searchCity = '';
 };
 load();
 </script>
@@ -555,7 +500,7 @@ ul {
       top: 17px;
 
       &:after {
-        content: "";
+        content: '';
         border-style: solid;
         border-width: 7px 7px 7px 7px;
         border-color: #fff transparent transparent;

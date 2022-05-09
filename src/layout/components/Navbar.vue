@@ -1,21 +1,8 @@
 <template>
   <div class="navbar">
-    <hamburger
-      id="hamburger-container"
-      :is-active="getters.sidebar.opened"
-      class="hamburger-container"
-      @toggleClick="toggleSideBar"
-    />
-    <breadcrumb
-      id="breadcrumb-container"
-      class="breadcrumb-container"
-      v-if="!$store.state.settings.topNav"
-    />
-    <top-nav
-      id="topmenu-container"
-      class="topmenu-container"
-      v-if="$store.state.settings.topNav"
-    />
+    <hamburger id="hamburger-container" :is-active="getters.sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" v-if="!$store.state.settings.topNav" />
+    <top-nav id="topmenu-container" class="topmenu-container" v-if="$store.state.settings.topNav" />
 
     <div class="right-menu">
       <template v-if="getters.device !== 'mobile'">
@@ -28,11 +15,7 @@
         </el-tooltip>
       </template>
       <div class="avatar-container">
-        <el-dropdown
-          @command="handleCommand"
-          class="right-menu-item hover-effect"
-          trigger="click"
-        >
+        <el-dropdown @command="handleCommand" class="right-menu-item hover-effect" trigger="click">
           <div class="avatar-wrapper">
             <img :src="getters.avatar" class="user-avatar" />
             <el-icon><caret-bottom /></el-icon>
@@ -57,27 +40,27 @@
 </template>
 
 <script setup>
-import { ElMessageBox } from "element-plus";
-import Breadcrumb from "@/components/Breadcrumb";
-import TopNav from "@/components/TopNav";
-import Hamburger from "@/components/Hamburger";
-import Screenfull from "@/components/Screenfull";
-import SizeSelect from "@/components/SizeSelect";
-import HeaderSearch from "@/components/HeaderSearch";
+import { ElMessageBox } from 'element-plus';
+import Breadcrumb from '@/components/Breadcrumb';
+import TopNav from '@/components/TopNav';
+import Hamburger from '@/components/Hamburger';
+import Screenfull from '@/components/Screenfull';
+import SizeSelect from '@/components/SizeSelect';
+import HeaderSearch from '@/components/HeaderSearch';
 
 const store = useStore();
 const getters = computed(() => store.getters);
 
 function toggleSideBar() {
-  store.dispatch("app/toggleSideBar");
+  store.dispatch('app/toggleSideBar');
 }
 
 function handleCommand(command) {
   switch (command) {
-    case "setLayout":
+    case 'setLayout':
       setLayout();
       break;
-    case "logout":
+    case 'logout':
       logout();
       break;
     default:
@@ -86,22 +69,22 @@ function handleCommand(command) {
 }
 
 function logout() {
-  ElMessageBox.confirm("确定注销并退出系统吗？", "提示", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning",
+  ElMessageBox.confirm('确定注销并退出系统吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning',
   })
     .then(() => {
-      store.dispatch("LogOut").then(() => {
-        location.href = "/index";
+      store.dispatch('LogOut').then(() => {
+        location.href = '/index';
       });
     })
     .catch(() => {});
 }
 
-const emits = defineEmits(["setLayout"]);
+const emits = defineEmits(['setLayout']);
 function setLayout() {
-  emits("setLayout");
+  emits('setLayout');
 }
 </script>
 

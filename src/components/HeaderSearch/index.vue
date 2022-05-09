@@ -1,10 +1,6 @@
 <template>
   <div :class="{ show: show }" class="header-search">
-    <svg-icon
-      class-name="search-icon"
-      icon-class="search"
-      @click.stop="click"
-    />
+    <svg-icon class-name="search-icon" icon-class="search" @click.stop="click" />
     <el-select
       ref="headerSearchSelectRef"
       v-model="search"
@@ -16,22 +12,17 @@
       class="header-search-select"
       @change="change"
     >
-      <el-option
-        v-for="option in options"
-        :key="option.item.path"
-        :value="option.item"
-        :label="option.item.title.join(' > ')"
-      />
+      <el-option v-for="option in options" :key="option.item.path" :value="option.item" :label="option.item.title.join(' > ')" />
     </el-select>
   </div>
 </template>
 
 <script setup>
-import Fuse from "fuse.js";
-import { getNormalPath } from "@/utils/dilu";
-import { isHttp } from "@/utils/validate";
+import Fuse from 'fuse.js';
+import { getNormalPath } from '@/utils/dilu';
+import { isHttp } from '@/utils/validate';
 
-const search = ref("");
+const search = ref('');
 const options = ref([]);
 const searchPool = ref([]);
 const show = ref(false);
@@ -56,13 +47,13 @@ function change(val) {
   const path = val.path;
   if (isHttp(path)) {
     // http(s):// 路径新窗口打开
-    const pindex = path.indexOf("http");
-    window.open(path.substr(pindex, path.length), "_blank");
+    const pindex = path.indexOf('http');
+    window.open(path.substr(pindex, path.length), '_blank');
   } else {
     router.push(path);
   }
 
-  search.value = "";
+  search.value = '';
   options.value = [];
   nextTick(() => {
     show.value = false;
@@ -78,11 +69,11 @@ function initFuse(list) {
     minMatchCharLength: 1,
     keys: [
       {
-        name: "title",
+        name: 'title',
         weight: 0.7,
       },
       {
-        name: "path",
+        name: 'path',
         weight: 0.3,
       },
     ],
@@ -90,7 +81,7 @@ function initFuse(list) {
 }
 // Filter out the routes that can be displayed in the sidebar
 // And generate the internationalized title
-function generateRoutes(routes, basePath = "", prefixTitle = []) {
+function generateRoutes(routes, basePath = '', prefixTitle = []) {
   let res = [];
 
   for (const r of routes) {
@@ -98,7 +89,7 @@ function generateRoutes(routes, basePath = "", prefixTitle = []) {
     if (r.hidden) {
       continue;
     }
-    const p = r.path.length > 0 && r.path[0] === "/" ? r.path : "/" + r.path;
+    const p = r.path.length > 0 && r.path[0] === '/' ? r.path : '/' + r.path;
     const data = {
       path: !isHttp(r.path) ? getNormalPath(basePath + p) : r.path,
       title: [...prefixTitle],
@@ -107,7 +98,7 @@ function generateRoutes(routes, basePath = "", prefixTitle = []) {
     if (r.meta && r.meta.title) {
       data.title = [...data.title, r.meta.title];
 
-      if (r.redirect !== "noRedirect") {
+      if (r.redirect !== 'noRedirect') {
         // only push the routes with title
         // special case: need to exclude parent router without redirect
         res.push(data);
@@ -125,7 +116,7 @@ function generateRoutes(routes, basePath = "", prefixTitle = []) {
   return res;
 }
 function querySearch(query) {
-  if (query !== "") {
+  if (query !== '') {
     options.value = fuse.value.search(query);
   } else {
     options.value = [];
@@ -142,9 +133,9 @@ watchEffect(() => {
 
 watch(show, (value) => {
   if (value) {
-    document.body.addEventListener("click", close);
+    document.body.addEventListener('click', close);
   } else {
-    document.body.removeEventListener("click", close);
+    document.body.removeEventListener('click', close);
   }
 });
 

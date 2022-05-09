@@ -1,10 +1,6 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
-    <scroll-pane
-      ref="scrollPaneRef"
-      class="tags-view-wrapper"
-      @scroll="handleScroll"
-    >
+    <scroll-pane ref="scrollPaneRef" class="tags-view-wrapper" @scroll="handleScroll">
       <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
@@ -18,43 +14,24 @@
       >
         {{ tag.title }}
         <span v-if="!isAffix(tag)" @click.prevent.stop="closeSelectedTag(tag)">
-          <close
-            class="el-icon-close"
-            style="width: 1em; height: 1em; vertical-align: middle"
-          />
+          <close class="el-icon-close" style="width: 1em; height: 1em; vertical-align: middle" />
         </span>
       </router-link>
     </scroll-pane>
-    <ul
-      v-show="visible"
-      :style="{ left: left + 'px', top: top + 'px' }"
-      class="contextmenu"
-    >
-      <li @click="refreshSelectedTag(selectedTag)">
-        <refresh-right style="width: 1em; height: 1em" /> 刷新页面
-      </li>
-      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">
-        <close style="width: 1em; height: 1em" /> 关闭当前
-      </li>
-      <li @click="closeOthersTags">
-        <circle-close style="width: 1em; height: 1em" /> 关闭其他
-      </li>
-      <li v-if="!isFirstView()" @click="closeLeftTags">
-        <back style="width: 1em; height: 1em" /> 关闭左侧
-      </li>
-      <li v-if="!isLastView()" @click="closeRightTags">
-        <right style="width: 1em; height: 1em" /> 关闭右侧
-      </li>
-      <li @click="closeAllTags(selectedTag)">
-        <circle-close style="width: 1em; height: 1em" /> 全部关闭
-      </li>
+    <ul v-show="visible" :style="{ left: left + 'px', top: top + 'px' }" class="contextmenu">
+      <li @click="refreshSelectedTag(selectedTag)"><refresh-right style="width: 1em; height: 1em" /> 刷新页面</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)"><close style="width: 1em; height: 1em" /> 关闭当前</li>
+      <li @click="closeOthersTags"><circle-close style="width: 1em; height: 1em" /> 关闭其他</li>
+      <li v-if="!isFirstView()" @click="closeLeftTags"><back style="width: 1em; height: 1em" /> 关闭左侧</li>
+      <li v-if="!isLastView()" @click="closeRightTags"><right style="width: 1em; height: 1em" /> 关闭右侧</li>
+      <li @click="closeAllTags(selectedTag)"><circle-close style="width: 1em; height: 1em" /> 全部关闭</li>
     </ul>
   </div>
 </template>
 
 <script setup>
-import ScrollPane from "./ScrollPane";
-import { getNormalPath } from "@/utils/dilu";
+import ScrollPane from './ScrollPane';
+import { getNormalPath } from '@/utils/dilu';
 
 const visible = ref(false);
 const top = ref(0);
@@ -78,9 +55,9 @@ watch(route, () => {
 });
 watch(visible, (value) => {
   if (value) {
-    document.body.addEventListener("click", closeMenu);
+    document.body.addEventListener('click', closeMenu);
   } else {
-    document.body.removeEventListener("click", closeMenu);
+    document.body.removeEventListener('click', closeMenu);
   }
 });
 onMounted(() => {
@@ -94,8 +71,8 @@ function isActive(r) {
 function activeStyle(tag) {
   if (!isActive(tag)) return {};
   return {
-    "background-color": theme.value,
-    "border-color": theme.value,
+    'background-color': theme.value,
+    'border-color': theme.value,
   };
 }
 function isAffix(tag) {
@@ -103,29 +80,23 @@ function isAffix(tag) {
 }
 function isFirstView() {
   try {
-    return (
-      selectedTag.value.fullPath === visitedViews.value[1].fullPath ||
-      selectedTag.value.fullPath === "/index"
-    );
+    return selectedTag.value.fullPath === visitedViews.value[1].fullPath || selectedTag.value.fullPath === '/index';
   } catch (err) {
     return false;
   }
 }
 function isLastView() {
   try {
-    return (
-      selectedTag.value.fullPath ===
-      visitedViews.value[visitedViews.value.length - 1].fullPath
-    );
+    return selectedTag.value.fullPath === visitedViews.value[visitedViews.value.length - 1].fullPath;
   } catch (err) {
     return false;
   }
 }
-function filterAffixTags(routes, basePath = "") {
+function filterAffixTags(routes, basePath = '') {
   let tags = [];
   routes.forEach((route) => {
     if (route.meta && route.meta.affix) {
-      const tagPath = getNormalPath(basePath + "/" + route.path);
+      const tagPath = getNormalPath(basePath + '/' + route.path);
       tags.push({
         fullPath: tagPath,
         path: tagPath,
@@ -148,14 +119,14 @@ function initTags() {
   for (const tag of res) {
     // Must have tag name
     if (tag.name) {
-      store.dispatch("tagsView/addVisitedView", tag);
+      store.dispatch('tagsView/addVisitedView', tag);
     }
   }
 }
 function addTags() {
   const { name } = route;
   if (name) {
-    store.dispatch("tagsView/addView", route);
+    store.dispatch('tagsView/addView', route);
   }
   return false;
 }
@@ -166,7 +137,7 @@ function moveToCurrentTag() {
         scrollPaneRef.value.moveToTarget(r);
         // when query is different then update
         if (r.fullPath !== route.fullPath) {
-          store.dispatch("tagsView/updateVisitedView", route);
+          store.dispatch('tagsView/updateVisitedView', route);
         }
       }
     }
@@ -217,11 +188,11 @@ function toLastView(visitedViews, view) {
   } else {
     // now the default is to redirect to the home page if there is no tags-view,
     // you can adjust it according to your needs.
-    if (view.name === "Dashboard") {
+    if (view.name === 'Dashboard') {
       // to reload home page
-      router.replace({ path: "/redirect" + view.fullPath });
+      router.replace({ path: '/redirect' + view.fullPath });
     } else {
-      router.push("/");
+      router.push('/');
     }
   }
 }
@@ -282,7 +253,7 @@ function handleScroll() {
         color: #fff;
         border-color: #42b983;
         &::before {
-          content: "";
+          content: '';
           background: #fff;
           display: inline-block;
           width: 8px;

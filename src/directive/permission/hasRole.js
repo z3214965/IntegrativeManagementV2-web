@@ -3,12 +3,12 @@
  * Copyright (c) 2022 dilu
  */
 
-import store from "@/store";
+import store from '@/store';
 
 export default {
   mounted(el, binding, vnode) {
     const { value } = binding;
-    const super_admin = "admin";
+    const super_admin = 'admin';
     const roles = store.getters && store.getters.roles;
 
     if (value && value instanceof Array && value.length > 0) {
