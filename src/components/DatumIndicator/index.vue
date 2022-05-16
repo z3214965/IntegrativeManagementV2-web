@@ -74,7 +74,7 @@ const dateChangeFun = () => {
   if (data.dateValue) {
     let endDateTitle = data.dateValue[1].getFullYear() + '-' + (data.dateValue[1].getMonth() + 1) + '-' + data.dateValue[1].getDate();
     let startDateTitle = data.dateValue[0].getFullYear() + '-' + (data.dateValue[0].getMonth() + 1) + '-' + data.dateValue[0].getDate();
-    let dataValue = new Date(data.dateValue[1].getFullYear(), data.dateValue[1].getMonth() + 1, data.dateValue[1].getDate() + 1);
+    let dataValue = new Date(data.dateValue[1].getFullYear(), data.dateValue[1].getMonth(), data.dateValue[1].getDate());
     dataValue.setHours(23);
     dataValue.setMinutes(59);
     dataValue.setSeconds(59);
