@@ -64,5 +64,8 @@ export function getIndustry() {
     url: 'system/dict/profession/list',
     method: 'get',
     timeout: 20000,
+    headers: {
+      isToken: false,
+    },
   });
 }

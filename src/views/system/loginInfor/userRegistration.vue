@@ -304,7 +304,7 @@ const toSelectArea = () => {
  */
 const selectCountry = (industryCategories) => {
   if (industryCategories === '') {
-    data.industryCategories = '不限';
+    data.industryCategories = '';
   } else {
     data.industryCategories = industryCategories;
   }
