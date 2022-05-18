@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from '@/router';
 import { ElNotification, ElMessageBox, ElMessage, ElLoading } from 'element-plus';
 import store from '@/store';
 import { getToken } from '@/utils/auth';
@@ -90,13 +91,15 @@ service.interceptors.response.use(
           .then(() => {
             isRelogin.show = false;
             store.dispatch('LogOut').then(() => {
-              location.href = '/index';
+              location.href = router.currentRoute.value.href;
             });
           })
           .catch(() => {
             isRelogin.show = false;
           });
+        return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
       }
+      location.href = router.currentRoute.value.href;
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
     } else if (code === 500) {
       ElMessage({
