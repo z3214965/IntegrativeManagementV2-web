@@ -2,36 +2,17 @@ import { login, logout, getInfo } from '@/api/login';
 import { getToken, setToken, removeToken } from '@/utils/auth';
 import defAva from '@/assets/images/profile.jpg';
 
-const user = {
-  state: {
+const useUserStore = defineStore('user', {
+  state: () => ({
     token: getToken(),
     name: '',
     avatar: '',
     roles: [],
     permissions: [],
-  },
-
-  mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token;
-    },
-    SET_NAME: (state, name) => {
-      state.name = name;
-    },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar;
-    },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles;
-    },
-    SET_PERMISSIONS: (state, permissions) => {
-      state.permissions = permissions;
-    },
-  },
-
+  }),
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
+    login(userInfo) {
       const username = userInfo.username.trim();
       const password = userInfo.password;
       const code = userInfo.code;
@@ -40,7 +21,7 @@ const user = {
         login(username, password, code, uuid)
           .then((res) => {
             setToken(res.token);
-            commit('SET_TOKEN', res.token);
+            this.token = res.token;
             resolve();
           })
           .catch((error) => {
@@ -48,9 +29,8 @@ const user = {
           });
       });
     },
-
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    getInfo() {
       return new Promise((resolve, reject) => {
         getInfo()
           .then((res) => {
@@ -59,13 +39,13 @@ const user = {
 
             if (res.roles && res.roles.length > 0) {
               // 验证返回的roles是否是一个非空数组
-              commit('SET_ROLES', res.roles);
-              commit('SET_PERMISSIONS', res.permissions);
+              this.roles = res.roles;
+              this.permissions = res.permissions;
             } else {
-              commit('SET_ROLES', ['ROLE_DEFAULT']);
+              this.setRoutes = ['ROLE_DEFAULT'];
             }
-            commit('SET_NAME', user.userName);
-            commit('SET_AVATAR', avatar);
+            this.name = user.userName;
+            this.avatar = avatar;
             resolve(res);
           })
           .catch((error) => {
@@ -73,15 +53,14 @@ const user = {
           });
       });
     },
-
     // 退出系统
-    LogOut({ commit, state }) {
+    logOut() {
       return new Promise((resolve, reject) => {
-        logout(state.token)
+        logout(this.token)
           .then(() => {
-            commit('SET_TOKEN', '');
-            commit('SET_ROLES', []);
-            commit('SET_PERMISSIONS', []);
+            this.token = '';
+            this.roles = [];
+            this.permissions = [];
             removeToken();
             resolve();
           })
@@ -90,16 +69,7 @@ const user = {
           });
       });
     },
-
-    // 前端 登出
-    FedLogOut({ commit }) {
-      return new Promise((resolve) => {
-        commit('SET_TOKEN', '');
-        removeToken();
-        resolve();
-      });
-    },
   },
-};
+});
 
-export default user;
+export default useUserStore;

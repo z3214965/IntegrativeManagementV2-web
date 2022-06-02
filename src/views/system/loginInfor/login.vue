@@ -139,10 +139,11 @@ import { getALYCode } from '@/api/tool/gen';
 import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
 import { decrypt } from '@/utils/jsencrypt';
+import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const userStore = useUserStore();
 const { proxy } = getCurrentInstance();
 
 const data = reactive({
@@ -259,8 +260,8 @@ const handleLogin = () => {
       return;
     }
     data.btnLoading = true;
-    store
-      .dispatch('Login', data.phoneLoginForm)
+    userStore
+      .login(data.phoneLoginForm)
       .then(() => {
         if (localStorage.getItem('DLverificationCodeRegister')) {
           localStorage.removeItem('DLverificationCodeRegister');
@@ -284,8 +285,8 @@ const handleLogin = () => {
       return;
     }
     data.btnLoading = true;
-    store
-      .dispatch('Login', data.loginForm)
+    userStore
+      .login(data.loginForm)
       .then((res) => {
         jumpToLoginPlatform({ type: route.query.type });
         if (localStorage.getItem('DLverificationCodeRegister')) {
@@ -332,7 +333,7 @@ const jumpToLoginPlatform = ({ type }) => {
   if (type) {
     let callback = decodeURIComponent(route.query.callback);
     let indexValue = callback.indexOf('?');
-    let token = store.state.user.token;
+    let token = userStore.token;
     let tokenType = '?token=';
     if (indexValue != -1) {
       tokenType = '&token=';

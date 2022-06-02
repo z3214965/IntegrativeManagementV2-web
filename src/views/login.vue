@@ -42,8 +42,9 @@
 import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
+import useUserStore from '@/store/modules/user';
 
-const store = useStore();
+const userStore = useUserStore();
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 
@@ -87,8 +88,8 @@ function handleLogin() {
         Cookies.remove('rememberMe');
       }
       // 调用action的登录方法
-      store
-        .dispatch('Login', loginForm.value)
+      userStore
+        .login(loginForm.value)
         .then(() => {
           router.push({ path: redirect.value || '/' });
         })

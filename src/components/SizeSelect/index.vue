@@ -16,10 +16,10 @@
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus';
+import useAppStore from '@/store/modules/app';
 
-const store = useStore();
-const size = computed(() => store.getters.size);
+const appStore = useAppStore();
+const size = computed(() => appStore.size);
 const route = useRoute();
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -29,21 +29,9 @@ const sizeOptions = ref([
   { label: '稍小', value: 'small' },
 ]);
 
-function refreshView() {
-  // In order to make the cached page re-rendered
-  store.dispatch('tagsView/delAllCachedViews', route);
-
-  const { fullPath } = route;
-
-  nextTick(() => {
-    router.replace({
-      path: '/redirect' + fullPath,
-    });
-  });
-}
 function handleSetSize(size) {
   proxy.$modal.loading('正在设置布局大小，请稍候...');
-  store.dispatch('app/setSize', size);
+  appStore.setSize(size);
   setTimeout('window.location.reload()', 1000);
 }
 </script>
