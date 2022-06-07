@@ -55,12 +55,14 @@ const data = reactive({
   ALYCode: null, //阿里云获取到的验证码
   message: null, //修改完后提示消息
 });
+
 const load = () => {
   let ALYCode = localStorage.getItem('DLverificationCode');
   if (ALYCode) {
     data.ALYCode = parseInt(ALYCode);
   }
 };
+
 /**
  * 立即验证
  */
@@ -91,6 +93,7 @@ const submitForm = () => {
     proxy.$message.warning('验证码输入错误！请重新输入');
   }
 };
+
 /**
  * 验证手机号是否正确
  */
@@ -101,6 +104,7 @@ const isCellPhone = (val) => {
     return true;
   }
 };
+
 /**
  * 验证码获取
  * 倒计时
@@ -140,6 +144,7 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 /**
  * 确认修改密码
  */
@@ -161,6 +166,7 @@ const editPassWord = async () => {
     }, 1000);
   }
 };
+
 /**
  * 跳转至数据管理平台
  * @param token token信息
@@ -194,6 +200,7 @@ const loginFun = (token) => {
     }
   }
 };
+
 load();
 </script>
 

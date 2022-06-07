@@ -123,6 +123,7 @@ const data = reactive({
   industryCategoriesList: [], //行业小类list
   industryOfSmallUUID: false, //行业小类显隐
 });
+
 const load = () => {
   let ALYCode = localStorage.getItem('DLverificationCodeRegister');
   if (ALYCode) {
@@ -149,6 +150,7 @@ const load = () => {
     });
   });
 };
+
 const submitForm = () => {
   try {
     if (!data.userInfo.professionId) {
@@ -215,6 +217,7 @@ const submitForm = () => {
     console.log(error);
   }
 };
+
 /**
  * 获取阿里云验证码
  * 倒计时
@@ -254,6 +257,7 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 /**
  * 跳转至数据管理平台
  */
@@ -286,6 +290,7 @@ const loginFun = (token) => {
     }
   }
 };
+
 /**
  * 显隐行业内容
  */
@@ -299,6 +304,7 @@ const toSelectArea = () => {
   selectCountry(data.currentArea.industryCategories);
   selectProvince(data.currentArea.industryOfSmall);
 };
+
 /**
  * 选择第一大类
  */
@@ -321,6 +327,7 @@ const selectCountry = (industryCategories) => {
   }
   data.industryOfSmall = '';
 };
+
 //选择第二小类
 const selectProvince = (pro, isClose) => {
   if (pro) {
@@ -331,11 +338,13 @@ const selectProvince = (pro, isClose) => {
     }
   }
 };
+
 //下拉菜单的收起
 const eventListener = () => {
   data.multistageUUID = false;
   data.searchCity = '';
 };
+
 load();
 </script>
 

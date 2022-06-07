@@ -135,9 +135,9 @@
 </template>
 
 <script setup name="LoginPage">
+import Cookies from 'js-cookie';
 import { getALYCode } from '@/api/tool/gen';
 import { getCodeImg } from '@/api/login';
-import Cookies from 'js-cookie';
 import { decrypt } from '@/utils/jsencrypt';
 import useUserStore from '@/store/modules/user';
 
@@ -192,6 +192,7 @@ const load = () => {
   getCode();
   getCookie();
 };
+
 //获取验证码图片
 const getCode = () => {
   getCodeImg().then((res) => {
@@ -202,6 +203,7 @@ const getCode = () => {
     }
   });
 };
+
 /**
  * 获取阿里云验证码
  * 倒计时
@@ -235,6 +237,7 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 //查看是否有登录信息
 const getCookie = () => {
   const username = Cookies.get('username');
@@ -246,6 +249,7 @@ const getCookie = () => {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 };
+
 //设置用户信息
 const handleLogin = () => {
   if (data.activeKey == 1) {
@@ -300,6 +304,7 @@ const handleLogin = () => {
       });
   }
 };
+
 /**
  * 去往找回密码页面
  */
