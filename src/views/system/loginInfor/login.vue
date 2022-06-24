@@ -86,8 +86,18 @@
         </div>
         <div class="margin24 flex-box">
           <div class="posr" style="width: 65%">
-            <input type="number" placeholder="验证码" class="codeInput input" v-model="data.loginForm.code" data.autocomplete="off" />
-            <svg focusable="false" class="svg2" data-icon="safety" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="0 0 1024 1024">
+            <input type="number" placeholder="验证码" class="input" style="height: 40px" v-model="data.loginForm.code" data.autocomplete="off" />
+            <svg
+              focusable="false"
+              class="svg2"
+              style="top: 12px"
+              data-icon="safety"
+              width="1em"
+              height="1em"
+              fill="currentColor"
+              aria-hidden="true"
+              viewBox="0 0 1024 1024"
+            >
               <path
                 d="M512 64L128 192v384c0 212.1 171.9 384 384 384s384-171.9 384-384V192L512 64zm312 512c0 172.3-139.7 312-312 312S200 748.3 200 576V246l312-110 312 110v330z"
               ></path>
@@ -96,7 +106,7 @@
               ></path>
             </svg>
           </div>
-          <img :src="data.codeUrl" alt="" class="codeImg" @click="getCode" />
+          <img :src="data.codeUrl" alt="" style="cursor: pointer" @click="getCode" />
         </div>
       </form>
       <!-- 手机号登录 -->
@@ -491,10 +501,6 @@ h1 {
   border: 1px;
   padding: 4px 15px;
   color: #fff;
-  cursor: pointer;
-}
-.codeImg {
-  height: 34px;
   cursor: pointer;
 }
 </style>
