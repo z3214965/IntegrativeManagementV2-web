@@ -113,7 +113,7 @@
       <form action="" class="form cellLogin" v-if="data.activeKey == 1" @keyup.enter="handleLogin">
         <div class="posr">
           <input
-            class="height40 margin33 input"
+            class="height40 margin36 input"
             type="text"
             placeholder="暂不支持大陆地区以外的手机号"
             autocomplete="off"
@@ -125,7 +125,7 @@
             ></path>
           </svg>
         </div>
-        <div class="flex-box height40 margin33">
+        <div class="flex-box height40 margin36">
           <input type="password" placeholder="6位数字" class="password" v-model="data.phoneLoginForm.code" autocomplete="off" />
           <button class="codeBtn" @click.prevent="btnValueFun">
             {{ data.btnValue }}
@@ -463,8 +463,8 @@ h1 {
 .height40 {
   height: 40px;
 }
-.margin33 {
-  margin-bottom: 33px;
+.margin36 {
+  margin-bottom: 36px;
 }
 /* 短信验证 input前置icon */
 .svg1 {
