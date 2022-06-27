@@ -90,7 +90,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup name="Cache">
 import { getCache } from '@/api/monitor/cache';
 import * as echarts from 'echarts';
 

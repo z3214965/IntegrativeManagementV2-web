@@ -91,7 +91,7 @@
         </el-form-item>
         <el-form-item label="回显样式" prop="listClass">
           <el-select v-model="form.listClass">
-            <el-option v-for="item in listClassOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in listClassOptions" :key="item.value" :label="item.label + '(' + item.value + ')'" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
