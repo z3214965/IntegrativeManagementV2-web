@@ -257,7 +257,7 @@ load();
     display: table-cell;
     vertical-align: middle;
   }
-  ::v-deep .is-icon {
+  :deep(.is-icon) {
     background: transparent;
   }
   .label {
