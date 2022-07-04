@@ -321,10 +321,7 @@ const handleLogin = () => {
 const retrievePassword = () => {
   router.push({
     path: '/passWordRetrieve',
-    query: {
-      type: route.query.type,
-      callback: route.query.callback,
-    },
+    query: route.query,
   });
 };
 
@@ -334,10 +331,7 @@ const retrievePassword = () => {
 const userRegistration = () => {
   router.push({
     path: '/userReg',
-    query: {
-      type: route.query.type,
-      callback: route.query.callback,
-    },
+    query: route.query,
   });
 };
 

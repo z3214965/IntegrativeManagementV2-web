@@ -96,10 +96,12 @@ import { registeredUser } from '@/api/system/user.js';
 import { getALYCode } from '@/api/tool/gen.js';
 import { getIndustry } from '@/api/login.js';
 import { setToken, getToken } from '@/utils/auth';
+import { useRoute, useRouter } from 'vue-router';
+import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const store = useUserStore();
 const { proxy } = getCurrentInstance();
 
 const data = reactive({
@@ -233,7 +235,7 @@ const btnValueFun = async () => {
   }
   let token = await getToken();
   if (token) {
-    await store.dispatch('LogOut');
+    await store.LogOut();
   }
   if (!data.interval && data.userInfo.phonenumber) {
     let ALYCode = await getALYCode(data.userInfo.phonenumber + '/1');
@@ -265,10 +267,7 @@ const loginFun = (token) => {
   if (!token) {
     router.push({
       path: '/login',
-      query: {
-        type: route.query.type,
-        callback: route.query.callback,
-      },
+      query: route.query,
     });
     return;
   } else {
@@ -285,7 +284,7 @@ const loginFun = (token) => {
       }
     } else {
       setToken(token); //cookie
-      store.state.user.token = token; //$store
+      store.token = token; //$store
       router.push({ path: '/index' });
     }
   }
