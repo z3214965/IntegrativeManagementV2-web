@@ -31,8 +31,14 @@ router.beforeEach(async (to, from, next) => {
         // 判断当前用户是否已拉取完user_info信息
         await store
           .dispatch('GetInfo')
-          .then(async () => {
+          .then(async (res) => {
             isRelogin.show = false;
+            //判断是否是具有进入综合管理界面权限 无权限跳转至官网
+            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal');
+            if (!adminInfo) {
+              location.href = 'https://dilutech.com/';
+              return;
+            }
             await store.dispatch('GenerateRoutes').then((accessRoutes) => {
               // 根据roles权限生成可访问的路由表
               accessRoutes.forEach((route) => {
