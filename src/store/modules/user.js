@@ -2,6 +2,8 @@ import { login, logout, getInfo } from '@/api/login';
 import { getToken, setToken, removeToken } from '@/utils/auth';
 import defAva from '@/assets/images/profile.jpg';
 
+const DL_HREF = 'DL_href';
+
 const useUserStore = defineStore('user', {
   state: () => ({
     token: getToken(),
@@ -68,6 +70,21 @@ const useUserStore = defineStore('user', {
             reject(error);
           });
       });
+    },
+
+    //获取从其他平台跳转来存储的参数
+    getOtherPlatformsParameter() {
+      return JSON.parse(localStorage.getItem(DL_HREF) || '{}');
+    },
+
+    //设置从其他平台跳转来存储参数
+    setOtherPlatformsParameter(data) {
+      localStorage.setItem(DL_HREF, JSON.stringify(data));
+    },
+
+    //删除从其他平台跳转来存储的参数
+    deleteOtherPlatformsParameter() {
+      localStorage.removeItem(DL_HREF);
     },
   },
 });

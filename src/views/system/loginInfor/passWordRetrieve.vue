@@ -173,7 +173,7 @@ const editPassWord = async () => {
  * 跳转至数据管理平台
  * @param token token信息
  */
-const loginFun = (token) => {
+const loginFun = async (token) => {
   if (!token) {
     router.push({
       path: '/login',
@@ -181,15 +181,17 @@ const loginFun = (token) => {
     });
   } else {
     let type = null;
-    if (route.query.type) {
-      type = route.query.type;
+    const to = await store.dispatch('getOtherPlatformsParameter'); //前往平台参数
+    await store.dispatch('deleteOtherPlatformsParameter'); //删除参数
+    if (to.type && to.callback) {
+      type = to.type;
       switch (type) {
         case 'h5-vp':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
+          window.open(decodeURIComponent(to.callback) + '?token=' + token, '_top');
           break;
         case 'web-vp':
         case 'web-dm':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
+          window.open(decodeURIComponent(to.callback) + '?token=' + token, '_top');
           break;
       }
     } else {

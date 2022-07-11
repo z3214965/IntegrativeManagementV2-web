@@ -17,9 +17,18 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
 
   let token = getToken();
-  if (token && to.path == '/login' && to.query.type) {
-    await useUserStore().logOut();
-    token = getToken(); //需要重新获取一次
+  if (to.path == '/login' && to.query.type) {
+    await useUserStore().setOtherPlatformsParameter(to.query);
+    let keys = Object.keys(to.query);
+    keys.forEach((v) => {
+      delete to.query[v];
+    });
+    to.href = to.path;
+    to.fullPath = to.path;
+    if (token) {
+      await useUserStore().logOut();
+      token = getToken(); //需要重新获取一次
+    }
   }
   if (token) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title);
@@ -33,8 +42,14 @@ router.beforeEach(async (to, from, next) => {
         // 判断当前用户是否已拉取完user_info信息
         await useUserStore()
           .getInfo()
-          .then(async () => {
+          .then(async (res) => {
             isRelogin.show = false;
+            //判断是否是具有进入综合管理界面权限 无权限跳转至官网
+            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal');
+            if (!adminInfo) {
+              location.href = 'https://dilutech.com/';
+              return;
+            }
             await usePermissionStore()
               .generateRoutes()
               .then((accessRoutes) => {
