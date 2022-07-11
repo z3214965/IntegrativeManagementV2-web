@@ -265,7 +265,7 @@ const handleLogin = () => {
         if (localStorage.getItem('DLverificationCodeRegister')) {
           localStorage.removeItem('DLverificationCodeRegister');
         }
-        jumpToLoginPlatform({ type: route.query.type });
+        jumpToLoginPlatform();
       })
       .catch(() => {
         data.btnLoading = false;
@@ -287,7 +287,7 @@ const handleLogin = () => {
     store
       .dispatch('Login', data.loginForm)
       .then((res) => {
-        jumpToLoginPlatform({ type: route.query.type });
+        jumpToLoginPlatform();
         if (localStorage.getItem('DLverificationCodeRegister')) {
           localStorage.removeItem('DLverificationCodeRegister');
         }
@@ -328,23 +328,29 @@ const userRegistration = () => {
 /**
  * 跳转回登录平台
  */
-const jumpToLoginPlatform = ({ type }) => {
-  if (type) {
-    let callback = decodeURIComponent(route.query.callback);
-    let indexValue = callback.indexOf('?');
-    let token = store.state.user.token;
-    let tokenType = '?token=';
-    if (indexValue != -1) {
-      tokenType = '&token=';
-    }
-    switch (type) {
-      case 'h5-vp':
-        window.open(callback + tokenType + token, '_top');
-        break;
-      case 'web-vp':
-      case 'web-dm':
-        window.open(callback + tokenType + token, '_top');
-        break;
+const jumpToLoginPlatform = async () => {
+  let type = null;
+  const to = await store.dispatch('getOtherPlatformsParameter'); //前往平台参数
+  await store.dispatch('deleteOtherPlatformsParameter'); //删除参数
+  if (to.type && to.callback) {
+    type = to.type;
+    if (type) {
+      let callback = decodeURIComponent(to.callback);
+      let indexValue = callback.indexOf('?');
+      const token = store.state.user.token;
+      let tokenType = '?token=';
+      if (indexValue != -1) {
+        tokenType = '&token=';
+      }
+      switch (type) {
+        case 'h5-vp':
+          window.open(callback + tokenType + token, '_top');
+          break;
+        case 'web-vp':
+        case 'web-dm':
+          window.open(callback + tokenType + token, '_top');
+          break;
+      }
     }
   } else {
     router.push({ path: data.redirect || '/' }).catch(() => {});

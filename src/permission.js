@@ -15,9 +15,18 @@ router.beforeEach(async (to, from, next) => {
   NProgress.start();
 
   let token = getToken();
-  if (token && to.path == '/login' && to.query.type) {
-    await store.dispatch('LogOut');
-    token = getToken(); //需要重新获取一次
+  if (to.path == '/login' && to.query.type) {
+    await store.dispatch('setOtherPlatformsParameter', to.query);
+    let keys = Object.keys(to.query);
+    keys.forEach((v) => {
+      delete to.query[v];
+    });
+    to.href = to.path;
+    to.fullPath = to.path;
+    if (token) {
+      await store.dispatch('LogOut');
+      token = getToken(); //需要重新获取一次
+    }
   }
   if (token) {
     to.meta.title && store.dispatch('settings/setTitle', to.meta.title);
