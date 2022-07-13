@@ -104,17 +104,17 @@ const user = {
 
     //获取从其他平台跳转来存储的参数
     getOtherPlatformsParameter() {
-      return JSON.parse(localStorage.getItem(DL_HREF) || '{}');
+      return JSON.parse(sessionStorage.getItem(DL_HREF) || '{}');
     },
 
     //设置从其他平台跳转来存储参数
     setOtherPlatformsParameter(context, data) {
-      localStorage.setItem(DL_HREF, JSON.stringify(data));
+      sessionStorage.setItem(DL_HREF, JSON.stringify(data));
     },
 
     //删除从其他平台跳转来存储的参数
     deleteOtherPlatformsParameter() {
-      localStorage.removeItem(DL_HREF);
+      sessionStorage.removeItem(DL_HREF);
     },
   },
 };
