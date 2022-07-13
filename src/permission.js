@@ -45,7 +45,7 @@ router.beforeEach(async (to, from, next) => {
           .then(async (res) => {
             isRelogin.show = false;
             //判断是否是具有进入综合管理界面权限 无权限跳转至官网
-            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal');
+            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal' || v.indexOf('admin'));
             if (!adminInfo) {
               location.href = 'https://dilutech.com/';
               return;
