@@ -497,4 +497,7 @@ h1 {
   height: 34px;
   cursor: pointer;
 }
+input[type='password']::-ms-reveal {
+  display: none;
+}
 </style>
