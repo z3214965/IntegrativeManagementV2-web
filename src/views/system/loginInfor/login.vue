@@ -503,4 +503,11 @@ h1 {
   color: #fff;
   cursor: pointer;
 }
+.codeImg {
+  height: 34px;
+  cursor: pointer;
+}
+input[type='password']::-ms-reveal {
+  display: none;
+}
 </style>

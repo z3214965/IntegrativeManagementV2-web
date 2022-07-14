@@ -19,12 +19,6 @@ router.beforeEach(async (to, from, next) => {
   let token = getToken();
   if (to.path == '/login' && to.query.type) {
     await useUserStore().setOtherPlatformsParameter(to.query);
-    let keys = Object.keys(to.query);
-    keys.forEach((v) => {
-      delete to.query[v];
-    });
-    to.href = to.path;
-    to.fullPath = to.path;
     if (token) {
       await useUserStore().logOut();
       token = getToken(); //需要重新获取一次
@@ -45,7 +39,7 @@ router.beforeEach(async (to, from, next) => {
           .then(async (res) => {
             isRelogin.show = false;
             //判断是否是具有进入综合管理界面权限 无权限跳转至官网
-            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal' || v.indexOf('admin'));
+            let adminInfo = res.roles.some((v) => v === 'admin' || v === 'dilu_internal' || v.indexOf('admin') != -1);
             if (!adminInfo) {
               location.href = 'https://dilutech.com/';
               return;
