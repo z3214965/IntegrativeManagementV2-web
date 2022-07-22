@@ -114,6 +114,7 @@
 </template>
 
 <script setup name="Data">
+import useDictStore from '@/store/modules/dict';
 import { optionselect as getDictOptionselect, getType } from '@/api/system/dict/type';
 import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data';
 
@@ -248,12 +249,14 @@ function submitForm() {
     if (valid) {
       if (form.value.dictCode != undefined) {
         updateData(form.value).then((response) => {
+          useDictStore().removeDict(queryParams.value.dictType);
           proxy.$modal.msgSuccess('修改成功');
           open.value = false;
           getList();
         });
       } else {
         addData(form.value).then((response) => {
+          useDictStore().removeDict(queryParams.value.dictType);
           proxy.$modal.msgSuccess('新增成功');
           open.value = false;
           getList();
@@ -273,6 +276,7 @@ function handleDelete(row) {
     .then(() => {
       getList();
       proxy.$modal.msgSuccess('删除成功');
+      useDictStore().removeDict(queryParams.value.dictType);
     })
     .catch(() => {});
 }
