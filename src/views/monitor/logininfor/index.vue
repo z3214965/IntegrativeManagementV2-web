@@ -30,13 +30,16 @@
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:logininfor:remove']">删除</el-button>
+        <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['monitor:logininfor:remove']">删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="danger" plain icon="Delete" @click="handleClean" v-hasPermi="['system:logininfor:remove']">清空</el-button>
+        <el-button type="danger" plain icon="Delete" @click="handleClean" v-hasPermi="['monitor:logininfor:remove']">清空</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:logininfor:export']">导出</el-button>
+        <el-button type="primary" plain icon="Unlock" :disabled="single" @click="handleUnlock" v-hasPermi="['monitor:logininfor:unlock']">解锁</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['monitor:logininfor:export']">导出</el-button>
       </el-col>
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
@@ -81,7 +84,7 @@
 </template>
 
 <script setup name="Logininfor">
-import { list, delLogininfor, cleanLogininfor } from '@/api/monitor/logininfor';
+import { list, delLogininfor, cleanLogininfor, unlockLogininfor } from '@/api/monitor/logininfor';
 
 const { proxy } = getCurrentInstance();
 const { sys_common_status } = proxy.useDict('sys_common_status');
@@ -90,7 +93,9 @@ const logininforList = ref([]);
 const loading = ref(true);
 const showSearch = ref(true);
 const ids = ref([]);
+const single = ref(true);
 const multiple = ref(true);
+const selectName = ref('');
 const total = ref(0);
 const dateRange = ref([]);
 const defaultSort = ref({ prop: 'loginTime', order: 'descending' });
@@ -131,6 +136,8 @@ function resetQuery() {
 function handleSelectionChange(selection) {
   ids.value = selection.map((item) => item.infoId);
   multiple.value = !selection.length;
+  single.value = selection.length != 1;
+  selectName.value = selection.map((item) => item.userName);
 }
 /** 排序触发事件 */
 function handleSortChange(column, prop, order) {
@@ -162,6 +169,19 @@ function handleClean() {
     .then(() => {
       getList();
       proxy.$modal.msgSuccess('清空成功');
+    })
+    .catch(() => {});
+}
+/** 解锁按钮操作 */
+function handleUnlock() {
+  const username = selectName.value;
+  proxy.$modal
+    .confirm('是否确认解锁用户"' + username + '"数据项?')
+    .then(function () {
+      return unlockLogininfor(username);
+    })
+    .then(() => {
+      proxy.$modal.msgSuccess('用户' + username + '解锁成功');
     })
     .catch(() => {});
 }
