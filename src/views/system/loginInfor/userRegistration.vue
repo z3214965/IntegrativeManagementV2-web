@@ -271,20 +271,10 @@ const loginFun = async (token) => {
     });
     return;
   } else {
-    let type = route.query.type;
     const to = await store.getOtherPlatformsParameter(); //前往平台参数
     await store.deleteOtherPlatformsParameter(); //删除参数
     if (to.type && to.callback) {
-      type = to.type;
-      switch (type) {
-        case 'h5-vp':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-      }
+      store.goToAnotherPlatform(to);
     } else {
       setToken(token); //cookie
       store.token = token; //$store
