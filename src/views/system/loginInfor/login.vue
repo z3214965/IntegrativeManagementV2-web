@@ -339,29 +339,10 @@ const userRegistration = () => {
  * 跳转回登录平台
  */
 const jumpToLoginPlatform = async () => {
-  let type = null;
   const to = await userStore.getOtherPlatformsParameter(); //前往平台参数
   await userStore.deleteOtherPlatformsParameter(); //删除参数
   if (to.type && to.callback) {
-    type = to.type;
-    if (type) {
-      let callback = decodeURIComponent(to.callback);
-      let indexValue = callback.indexOf('?');
-      const token = userStore.token;
-      let tokenType = '?token=';
-      if (indexValue != -1) {
-        tokenType = '&token=';
-      }
-      switch (type) {
-        case 'h5-vp':
-          window.open(callback + tokenType + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(callback + tokenType + token, '_top');
-          break;
-      }
-    }
+    userStore.goToAnotherPlatform(to);
   } else {
     router.push({ path: data.redirect || '/' }).catch(() => {});
   }

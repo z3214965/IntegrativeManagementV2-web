@@ -19,9 +19,17 @@ router.beforeEach(async (to, from, next) => {
   let token = getToken();
   if (to.path == '/login' && to.query.type) {
     await useUserStore().setOtherPlatformsParameter(to.query);
-    if (token) {
+    //status代表退出登录跳转来的
+    if (to.query.status) {
+      delete to.query['status'];
       await useUserStore().logOut();
       token = getToken(); //需要重新获取一次
+      next({ path: '/login', query: to.query });
+      return;
+    }
+    if (to.query.type && to.query.callback && token) {
+      useUserStore().goToAnotherPlatform(to.query);
+      return;
     }
   }
   if (token) {
