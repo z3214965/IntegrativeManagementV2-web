@@ -13,6 +13,7 @@
             :expand-on-click-node="false"
             :filter-node-method="filterNode"
             ref="deptTreeRef"
+            node-key="id"
             highlight-current
             default-expand-all
             @node-click="handleNodeClick"
@@ -348,6 +349,8 @@ function handleQuery() {
 function resetQuery() {
   dateRange.value = [];
   proxy.resetForm('queryRef');
+  queryParams.value.deptId = undefined;
+  proxy.$refs.tree.setCurrentKey(null);
   handleQuery();
 }
 /** 删除按钮操作 */

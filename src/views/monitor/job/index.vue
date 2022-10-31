@@ -159,6 +159,10 @@
       </template>
     </el-dialog>
 
+    <el-dialog title="Cron表达式生成器" v-model="openCron" append-to-body destroy-on-close>
+      <crontab ref="crontabRef" @hide="openCron = false" @fill="crontabFill" :expression="expression"></crontab>
+    </el-dialog>
+
     <!-- 任务日志详细 -->
     <el-dialog title="任务详细" v-model="openView" width="700px" append-to-body>
       <el-form :model="form" label-width="120px">
@@ -213,7 +217,7 @@
 
 <script setup name="Job">
 import { listJob, getJob, delJob, addJob, updateJob, runJob, changeJobStatus } from '@/api/monitor/job';
-
+import Crontab from '@/components/Crontab';
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const { sys_job_group, sys_job_status } = proxy.useDict('sys_job_group', 'sys_job_status');
@@ -243,7 +247,7 @@ const data = reactive({
   rules: {
     jobName: [{ required: true, message: '任务名称不能为空', trigger: 'blur' }],
     invokeTarget: [{ required: true, message: '调用目标字符串不能为空', trigger: 'blur' }],
-    cronExpression: [{ required: true, message: 'cron执行表达式不能为空', trigger: 'blur' }],
+    cronExpression: [{ required: true, message: 'cron执行表达式不能为空', trigger: 'change' }],
   },
 });
 
