@@ -93,32 +93,22 @@ service.interceptors.response.use(
             useUserStore()
               .logOut()
               .then(() => {
-                location.href = router.currentRoute.value.href;
+                location.href = '/index';
               });
           })
           .catch(() => {
             isRelogin.show = false;
           });
-        return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
       }
-      location.href = router.currentRoute.value.href;
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。');
     } else if (code === 500) {
-      ElMessage({
-        message: msg,
-        type: 'error',
-      });
+      ElMessage({ message: msg, type: 'error' });
       return Promise.reject(new Error(msg));
     } else if (code === 601) {
-      ElMessage({
-        message: msg,
-        type: 'warning',
-      });
+      ElMessage({ message: msg, type: 'warning' });
       return Promise.reject(new Error(msg));
     } else if (code !== 200) {
-      ElNotification.error({
-        title: msg,
-      });
+      ElNotification.error({ title: msg });
       return Promise.reject('error');
     } else {
       return Promise.resolve(res.data);
@@ -134,11 +124,7 @@ service.interceptors.response.use(
     } else if (message.includes('Request failed with status code')) {
       message = '系统接口' + message.substr(message.length - 3) + '异常';
     }
-    ElMessage({
-      message: message,
-      type: 'error',
-      duration: 5 * 1000,
-    });
+    ElMessage({ message: message, type: 'error', duration: 5 * 1000 });
     return Promise.reject(error);
   }
 );
