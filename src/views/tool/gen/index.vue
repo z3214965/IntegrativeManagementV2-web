@@ -1,11 +1,11 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
       <el-form-item label="表名称" prop="tableName">
-        <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.tableName" placeholder="请输入表名称" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="表描述" prop="tableComment">
-        <el-input v-model="queryParams.tableComment" placeholder="请输入表描述" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.tableComment" placeholder="请输入表描述" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="创建时间" style="width: 308px">
         <el-date-picker
@@ -54,19 +54,19 @@
       <el-table-column label="操作" align="center" width="330" class-name="small-padding fixed-width">
         <template #default="scope">
           <el-tooltip content="预览" placement="top">
-            <el-button type="text" icon="View" @click="handlePreview(scope.row)" v-hasPermi="['tool:gen:preview']"></el-button>
+            <el-button link type="primary" icon="View" @click="handlePreview(scope.row)" v-hasPermi="['tool:gen:preview']"></el-button>
           </el-tooltip>
           <el-tooltip content="编辑" placement="top">
-            <el-button type="text" icon="Edit" @click="handleEditTable(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEditTable(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
           </el-tooltip>
           <el-tooltip content="删除" placement="top">
-            <el-button type="text" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['tool:gen:remove']"></el-button>
+            <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['tool:gen:remove']"></el-button>
           </el-tooltip>
           <el-tooltip content="同步" placement="top">
-            <el-button type="text" icon="Refresh" @click="handleSynchDb(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
+            <el-button link type="primary" icon="Refresh" @click="handleSynchDb(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
-            <el-button type="text" icon="Download" @click="handleGenTable(scope.row)" v-hasPermi="['tool:gen:code']"></el-button>
+            <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasPermi="['tool:gen:code']"></el-button>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -163,7 +163,7 @@ function handleGenTable(row) {
       proxy.$modal.msgSuccess('成功生成到自定义路径：' + row.genPath);
     });
   } else {
-    proxy.$download.zip('/tool/gen/batchGenCode?tables=' + tbNames, 'dilu');
+    proxy.$download.zip('/tool/gen/batchGenCode?tables=' + tbNames, 'dilu.zip');
   }
 }
 /** 同步数据库操作 */
@@ -211,10 +211,7 @@ function handleSelectionChange(selection) {
 /** 修改按钮操作 */
 function handleEditTable(row) {
   const tableId = row.tableId || ids.value[0];
-  router.push({
-    path: '/tool/gen-edit/index/' + tableId,
-    query: { pageNum: queryParams.value.pageNum },
-  });
+  router.push({ path: '/tool/gen-edit/index/' + tableId, query: { pageNum: queryParams.value.pageNum } });
 }
 /** 删除按钮操作 */
 function handleDelete(row) {
