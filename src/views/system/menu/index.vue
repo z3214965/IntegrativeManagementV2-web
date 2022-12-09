@@ -74,6 +74,7 @@
                 value-key="menuId"
                 placeholder="选择上级菜单"
                 check-strictly
+                :render-after-expand="false"
               />
             </el-form-item>
           </el-col>
