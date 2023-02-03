@@ -89,21 +89,16 @@ const useUserStore = defineStore('user', {
 
     //跳转至其他平台
     goToAnotherPlatform(to) {
-      let type = to.type;
-      let callback = decodeURIComponent(to.callback);
-      let indexValue = callback.indexOf('?');
-      const token = this.token;
-      let tokenType = '?token=';
-      if (indexValue != -1) {
-        tokenType = '&token=';
-      }
+      const type = to.type;
+      const callback = decodeURIComponent(to.callback);
+      const token = callback.indexOf('?') === -1 ? '?token=' + this.token : '&token=' + this.token;
       switch (type) {
         case 'h5-vp':
-          window.open(callback + tokenType + token, '_top');
+          window.open(callback + token, '_top');
           break;
         case 'web-vp':
         case 'web-dm':
-          window.open(callback + tokenType + token, '_top');
+          window.open(callback + token, '_top');
           break;
       }
     },
