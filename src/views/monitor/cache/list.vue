@@ -4,7 +4,7 @@
       <el-col :span="8">
         <el-card style="height: calc(100vh - 125px)">
           <template #header>
-            <span>缓存列表</span>
+            <Collection style="width: 1em; height: 1em; vertical-align: middle" /> <span style="vertical-align: middle">缓存列表</span>
             <el-button style="float: right; padding: 3px 0" link type="primary" icon="Refresh" @click="refreshCacheNames()"></el-button>
           </template>
           <el-table v-loading="loading" :data="cacheNames" :height="tableHeight" highlight-current-row @row-click="getCacheKeys" style="width: 100%">
@@ -25,7 +25,7 @@
       <el-col :span="8">
         <el-card style="height: calc(100vh - 125px)">
           <template #header>
-            <span>键名列表</span>
+            <Key style="width: 1em; height: 1em; vertical-align: middle" /> <span style="vertical-align: middle">键名列表</span>
             <el-button style="float: right; padding: 3px 0" link type="primary" icon="Refresh" @click="refreshCacheKeys()"></el-button>
           </template>
           <el-table v-loading="subLoading" :data="cacheKeys" :height="tableHeight" highlight-current-row @row-click="handleCacheValue" style="width: 100%">
@@ -43,7 +43,7 @@
       <el-col :span="8">
         <el-card :bordered="false" style="height: calc(100vh - 125px)">
           <template #header>
-            <span>缓存内容</span>
+            <Document style="width: 1em; height: 1em; vertical-align: middle" /> <span style="vertical-align: middle">缓存内容</span>
             <el-button style="float: right; padding: 3px 0" link type="primary" icon="Refresh" @click="handleClearCacheAll()">清理全部</el-button>
           </template>
           <el-form :model="cacheForm">
