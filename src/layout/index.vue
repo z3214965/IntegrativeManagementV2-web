@@ -77,7 +77,9 @@ function setLayout() {
   .el-scrollbar {
     height: 100%;
   }
-
+  :deep(.el-scrollbar__bar).is-vertical {
+    z-index: 10;
+  }
   :deep(.el-scrollbar__wrap) {
     overflow-x: hidden;
   }
