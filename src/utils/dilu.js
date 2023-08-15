@@ -107,10 +107,12 @@ export function selectDictLabels(datas, value, separator) {
         actions.push(datas[key].label + currentSeparator);
         match = true;
       }
+      return match;
     });
     if (!match) {
       actions.push(temp[val] + currentSeparator);
     }
+    return match;
   });
   return actions.join('').substring(0, actions.join('').length - 1);
 }
