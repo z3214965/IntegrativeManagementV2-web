@@ -8,8 +8,8 @@
             <table cellspacing="0" style="width: 100%">
               <thead>
                 <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">值</div></th>
+                  <th class="el-table__cell is-leaf" id="attribute"><div class="cell">属性</div></th>
+                  <th class="el-table__cell is-leaf" id="value"><div class="cell">值</div></th>
                 </tr>
               </thead>
               <tbody>
@@ -50,9 +50,9 @@
             <table cellspacing="0" style="width: 100%">
               <thead>
                 <tr>
-                  <th class="el-table__cell is-leaf"><div class="cell">属性</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">内存</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">JVM</div></th>
+                  <th class="el-table__cell is-leaf" id="attribute"><div class="cell">属性</div></th>
+                  <th class="el-table__cell is-leaf" id="memory"><div class="cell">内存</div></th>
+                  <th class="el-table__cell is-leaf" id="jvm"><div class="cell">JVM</div></th>
                 </tr>
               </thead>
               <tbody>
@@ -193,13 +193,13 @@
             <table cellspacing="0" style="width: 100%">
               <thead>
                 <tr>
-                  <th class="el-table__cell el-table__cell is-leaf"><div class="cell">盘符路径</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">文件系统</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">盘符类型</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">总大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">可用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用大小</div></th>
-                  <th class="el-table__cell is-leaf"><div class="cell">已用百分比</div></th>
+                  <th class="el-table__cell el-table__cell is-leaf" id="drivePath"><div class="cell">盘符路径</div></th>
+                  <th class="el-table__cell is-leaf" id="fileSystem"><div class="cell">文件系统</div></th>
+                  <th class="el-table__cell is-leaf" id="driveType"><div class="cell">盘符类型</div></th>
+                  <th class="el-table__cell is-leaf" id="totalSize"><div class="cell">总大小</div></th>
+                  <th class="el-table__cell is-leaf" id="availableSize"><div class="cell">可用大小</div></th>
+                  <th class="el-table__cell is-leaf" id="usedSize"><div class="cell">已用大小</div></th>
+                  <th class="el-table__cell is-leaf" id="usedPercentage"><div class="cell">已用百分比</div></th>
                 </tr>
               </thead>
               <tbody v-if="server.sysFiles">

@@ -22,7 +22,7 @@
           <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="register-code">
-          <img :src="codeUrl" @click="getCode" class="register-code-img" />
+          <img :src="codeUrl" @click="getCode" class="register-code-img" alt="" />
         </div>
       </el-form-item>
       <el-form-item style="width: 100%">
@@ -169,7 +169,7 @@ getCode();
   width: 100%;
   text-align: center;
   color: #fff;
-  font-family: Arial;
+  font-family: Arial, Sans-serif;
   font-size: 12px;
   letter-spacing: 1px;
 }

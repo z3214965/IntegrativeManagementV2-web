@@ -434,7 +434,6 @@ load();
   }
   button {
     color: white;
-    padding: 10px 20px;
     font-size: 14px;
     border-radius: 4px;
     display: inline-block;

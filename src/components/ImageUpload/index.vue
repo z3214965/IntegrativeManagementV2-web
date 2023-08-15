@@ -32,7 +32,7 @@
     </div>
 
     <el-dialog v-model="dialogVisible" title="预览" width="800px" append-to-body>
-      <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto" />
+      <img :src="dialogImageUrl" style="display: block; max-width: 100%; margin: 0 auto" alt="" />
     </el-dialog>
   </div>
 </template>

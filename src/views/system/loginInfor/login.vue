@@ -179,7 +179,7 @@ const data = reactive({
   btnLoading: false, //登录按钮标识符
   interval: null, // 短信验证码获取定时器
   passwordInvisible: true, //密码框右侧图标展示标识符
-  passwordType: 'password', //密码框展示密码类型
+  passwordType: '', //密码框展示密码类型
 });
 
 const load = () => {
@@ -367,7 +367,7 @@ load();
   box-sizing: border-box;
   background-size: cover;
   border-radius: 6px;
-  background: #ffffff;
+  background-color: #ffffff;
   padding: 25px 25px 5px 25px;
 }
 

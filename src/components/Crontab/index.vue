@@ -35,8 +35,8 @@
         <p class="title">时间表达式</p>
         <table>
           <thead>
-            <th v-for="item of tabTitles" :key="item">{{ item }}</th>
-            <th>Cron 表达式</th>
+            <th v-for="item of tabTitles" :key="item" :id="item">{{ item }}</th>
+            <th id="other">Cron 表达式</th>
           </thead>
           <tbody>
             <td>
@@ -264,7 +264,7 @@ onMounted(() => {
 .popup-result table span {
   display: block;
   width: 100%;
-  font-family: arial;
+  font-family: arial, Sans-serif;
   line-height: 30px;
   height: 30px;
   white-space: nowrap;
