@@ -94,7 +94,14 @@ function handleLogin() {
       userStore
         .login(loginForm.value)
         .then(() => {
-          router.push({ path: redirect.value || '/' });
+          const query = route.query;
+          const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+            if (cur !== 'redirect') {
+              acc[cur] = query[cur];
+            }
+            return acc;
+          }, {});
+          router.push({ path: redirect.value || '/', query: otherQueryParams });
         })
         .catch(() => {
           loading.value = false;

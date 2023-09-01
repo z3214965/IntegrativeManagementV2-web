@@ -11,7 +11,6 @@
           <div>
             <div class="text-center">
               <userAvatar />
-              <!-- <userAvatar :user="state.user" /> -->
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
