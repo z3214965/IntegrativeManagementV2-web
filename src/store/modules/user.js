@@ -7,6 +7,7 @@ const DL_HREF = 'DL_href';
 const useUserStore = defineStore('user', {
   state: () => ({
     token: getToken(),
+    id: '',
     name: '',
     avatar: '',
     roles: [],
@@ -46,6 +47,7 @@ const useUserStore = defineStore('user', {
             } else {
               this.roles = ['ROLE_DEFAULT'];
             }
+            this.id = user.userId;
             this.name = user.userName;
             this.avatar = avatar;
             resolve(res);

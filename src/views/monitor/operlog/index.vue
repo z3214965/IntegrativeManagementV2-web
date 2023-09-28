@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="操作地址" prop="operIp">
+        <el-input v-model="queryParams.operIp" placeholder="请输入操作地址" clearable style="width: 240px" @keyup.enter="handleQuery" />
+      </el-form-item>
       <el-form-item label="系统模块" prop="title">
         <el-input v-model="queryParams.title" placeholder="请输入系统模块" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
@@ -72,7 +75,7 @@
         sortable="custom"
         :sort-orders="['descending', 'ascending']"
       />
-      <el-table-column label="主机" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
+      <el-table-column label="操作地址" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
       <el-table-column label="操作状态" align="center" prop="status">
         <template #default="scope">
           <dict-tag :options="sys_common_status" :value="scope.row.status" />
@@ -175,6 +178,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
+    operIp: undefined,
     title: undefined,
     operName: undefined,
     businessType: undefined,
