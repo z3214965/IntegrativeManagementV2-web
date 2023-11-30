@@ -86,11 +86,11 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="24" v-if="form.menuType != 'F'">
             <el-form-item label="菜单图标" prop="icon">
-              <el-popover placement="bottom-start" :width="540" v-model:visible="showChooseIcon" trigger="click" @show="showSelectIcon">
+              <el-popover placement="bottom-start" :width="540" trigger="click">
                 <template #reference>
-                  <el-input v-model="form.icon" placeholder="点击选择图标" @blur="showSelectIcon" v-click-outside="hideSelectIcon" readonly>
+                  <el-input v-model="form.icon" placeholder="点击选择图标" @blur="showSelectIcon" readonly>
                     <template #prefix>
                       <svg-icon v-if="form.icon" :icon-class="form.icon" class="el-input__icon" style="height: 32px; width: 16px" />
                       <el-icon v-else style="height: 32px; width: 16px"><search /></el-icon>
@@ -209,7 +209,7 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType != 'F'">
+          <el-col :span="12">
             <el-form-item>
               <template #label>
                 <span>
@@ -240,7 +240,6 @@
 import { addMenu, delMenu, getMenu, listMenu, updateMenu } from '@/api/system/menu';
 import SvgIcon from '@/components/SvgIcon';
 import IconSelect from '@/components/IconSelect';
-import { ClickOutside as vClickOutside } from 'element-plus';
 
 const { proxy } = getCurrentInstance();
 const { sys_show_hide, sys_normal_disable } = proxy.useDict('sys_show_hide', 'sys_normal_disable');
@@ -253,7 +252,6 @@ const title = ref('');
 const menuOptions = ref([]);
 const isExpandAll = ref(false);
 const refreshTable = ref(true);
-const showChooseIcon = ref(false);
 const iconSelectRef = ref(null);
 
 const data = reactive({
@@ -312,20 +310,10 @@ function reset() {
 /** 展示下拉图标 */
 function showSelectIcon() {
   iconSelectRef.value.reset();
-  showChooseIcon.value = true;
 }
 /** 选择图标 */
 function selected(name) {
   form.value.icon = name;
-  showChooseIcon.value = false;
-}
-/** 图标外层点击隐藏下拉列表 */
-function hideSelectIcon(event) {
-  var elem = event.relatedTarget || event.srcElement || event.target || event.currentTarget;
-  var className = elem.className;
-  if (className !== 'el-input__inner') {
-    showChooseIcon.value = false;
-  }
 }
 /** 搜索按钮操作 */
 function handleQuery() {

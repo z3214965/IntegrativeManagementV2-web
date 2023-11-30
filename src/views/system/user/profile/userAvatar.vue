@@ -1,6 +1,6 @@
 <template>
   <div class="user-info-head" @click="editCropper()">
-    <img :src="options.img" title="点击上传头像" class="img-circle img-lg" alt="" />
+    <img :src="options.img" title="点击上传头像" class="img-circle img-lg" />
     <el-dialog :title="title" v-model="open" width="800px" append-to-body @opened="modalOpened" @close="closeDialog">
       <el-row>
         <el-col :xs="24" :md="12" :style="{ height: '350px' }">
@@ -19,7 +19,7 @@
         </el-col>
         <el-col :xs="24" :md="12" :style="{ height: '350px' }">
           <div class="avatar-upload-preview">
-            <img :src="options.previews.url" :style="options.previews.img" alt="" />
+            <img :src="options.previews.url" :style="options.previews.img" />
           </div>
         </el-col>
       </el-row>
@@ -74,6 +74,7 @@ const options = reactive({
   autoCropHeight: 200, // 默认生成截图框高度
   fixedBox: true, // 固定截图框大小 不允许改变
   outputType: 'png', // 默认生成截图为PNG格式
+  filename: 'avatar', // 文件名称
   previews: {}, //预览数据
 });
 
@@ -109,6 +110,7 @@ function beforeUpload(file) {
     reader.readAsDataURL(file);
     reader.onload = () => {
       options.img = reader.result;
+      options.filename = file.name;
     };
   }
 }
@@ -116,7 +118,7 @@ function beforeUpload(file) {
 function uploadImg() {
   proxy.$refs.cropper.getCropBlob((data) => {
     let formData = new FormData();
-    formData.append('avatarfile', data);
+    formData.append('avatarfile', data, options.filename);
     uploadAvatar(formData).then((response) => {
       open.value = false;
       options.img = import.meta.env.VITE_APP_BASE_API + response.imgUrl;
