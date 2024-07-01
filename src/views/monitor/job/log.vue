@@ -228,6 +228,4 @@ function handleExport() {
     getList();
   }
 })();
-
-getList();
 </script>
