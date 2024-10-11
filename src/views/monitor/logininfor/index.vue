@@ -193,7 +193,7 @@ function handleExport() {
     {
       ...queryParams.value,
     },
-    `config_${new Date().getTime()}.xlsx`
+    `logininfor_${new Date().getTime()}.xlsx`
   );
 }
 

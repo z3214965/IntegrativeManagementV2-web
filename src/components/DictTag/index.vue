@@ -10,14 +10,7 @@
         >
           {{ item.label + ' ' }}
         </span>
-        <el-tag
-          v-else
-          :disable-transitions="true"
-          :key="item.value + ''"
-          :index="index"
-          :type="item.elTagType === 'primary' ? 'primary' : item.elTagType"
-          :class="item.elTagClass"
-        >
+        <el-tag v-else :disable-transitions="true" :key="item.value + ''" :index="index" :type="item.elTagType e" :class="item.elTagClass">
           {{ item.label + ' ' }}
         </el-tag>
       </template>
