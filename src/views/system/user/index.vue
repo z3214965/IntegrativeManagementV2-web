@@ -1,110 +1,116 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <!--部门数据-->
-      <el-col :span="4" :xs="24">
-        <div class="head-container">
-          <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
-        </div>
-        <div class="head-container">
-          <el-tree
-            :data="deptOptions"
-            :props="{ label: 'label', children: 'children' }"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            ref="deptTreeRef"
-            node-key="id"
-            highlight-current
-            default-expand-all
-            @node-click="handleNodeClick"
-          />
-        </div>
-      </el-col>
-      <!--用户数据-->
-      <el-col :span="20" :xs="24">
-        <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
-          <el-form-item label="用户名称" prop="userName">
-            <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 240px" @keyup.enter="handleQuery" />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 240px">
-              <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" style="width: 308px">
-            <el-date-picker
-              v-model="dateRange"
-              value-format="YYYY-MM-DD"
-              type="daterange"
-              range-separator="-"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            ></el-date-picker>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
-            <el-button icon="Refresh" @click="resetQuery">重置</el-button>
-          </el-form-item>
-        </el-form>
+      <splitpanes class="default-theme">
+        <!--部门数据-->
+        <pane size="16">
+          <el-col>
+            <div class="head-container">
+              <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
+            </div>
+            <div class="head-container">
+              <el-tree
+                :data="deptOptions"
+                :props="{ label: 'label', children: 'children' }"
+                :expand-on-click-node="false"
+                :filter-node-method="filterNode"
+                ref="deptTreeRef"
+                node-key="id"
+                highlight-current
+                default-expand-all
+                @node-click="handleNodeClick"
+              />
+            </div>
+          </el-col>
+        </pane>
+        <!--用户数据-->
+        <pane>
+          <el-col size="84">
+            <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+              <el-form-item label="用户名称" prop="userName">
+                <el-input v-model="queryParams.userName" placeholder="请输入用户名称" clearable style="width: 240px" @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="手机号码" prop="phonenumber">
+                <el-input v-model="queryParams.phonenumber" placeholder="请输入手机号码" clearable style="width: 240px" @keyup.enter="handleQuery" />
+              </el-form-item>
+              <el-form-item label="状态" prop="status">
+                <el-select v-model="queryParams.status" placeholder="用户状态" clearable style="width: 240px">
+                  <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="创建时间" style="width: 308px">
+                <el-date-picker
+                  v-model="dateRange"
+                  value-format="YYYY-MM-DD"
+                  type="daterange"
+                  range-separator="-"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" icon="Search" @click="handleQuery">搜索</el-button>
+                <el-button icon="Refresh" @click="resetQuery">重置</el-button>
+              </el-form-item>
+            </el-form>
 
-        <el-row :gutter="10" class="mb8">
-          <el-col :span="1.5">
-            <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="info" plain icon="Upload" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
-          </el-col>
-          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
-        </el-row>
+            <el-row :gutter="10" class="mb8">
+              <el-col :span="1.5">
+                <el-button type="primary" plain icon="Plus" @click="handleAdd" v-hasPermi="['system:user:add']">新增</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="success" plain icon="Edit" :disabled="single" @click="handleUpdate" v-hasPermi="['system:user:edit']">修改</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="danger" plain icon="Delete" :disabled="multiple" @click="handleDelete" v-hasPermi="['system:user:remove']">删除</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="info" plain icon="Upload" @click="handleImport" v-hasPermi="['system:user:import']">导入</el-button>
+              </el-col>
+              <el-col :span="1.5">
+                <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
+              </el-col>
+              <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+            </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-          <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
-            <template #default="scope">
-              <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template #default="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
-            <template #default="scope">
-              <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
-              </el-tooltip>
-              <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
-              </el-tooltip>
-            </template>
-          </el-table-column>
-        </el-table>
-        <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
-      </el-col>
+            <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+              <el-table-column type="selection" width="50" align="center" />
+              <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+              <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+              <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+                <template #default="scope">
+                  <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
+                </template>
+              </el-table-column>
+              <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+                <template #default="scope">
+                  <span>{{ parseTime(scope.row.createTime) }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+                <template #default="scope">
+                  <el-tooltip content="修改" placement="top" v-if="scope.row.userId !== 1">
+                    <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+                  </el-tooltip>
+                  <el-tooltip content="删除" placement="top" v-if="scope.row.userId !== 1">
+                    <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:user:remove']"></el-button>
+                  </el-tooltip>
+                  <el-tooltip content="重置密码" placement="top" v-if="scope.row.userId !== 1">
+                    <el-button link type="primary" icon="Key" @click="handleResetPwd(scope.row)" v-hasPermi="['system:user:resetPwd']"></el-button>
+                  </el-tooltip>
+                  <el-tooltip content="分配角色" placement="top" v-if="scope.row.userId !== 1">
+                    <el-button link type="primary" icon="CircleCheck" @click="handleAuthRole(scope.row)" v-hasPermi="['system:user:edit']"></el-button>
+                  </el-tooltip>
+                </template>
+              </el-table-column>
+            </el-table>
+            <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+          </el-col>
+        </pane>
+      </splitpanes>
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
@@ -238,6 +244,8 @@
 <script setup name="User">
 import { getToken } from '@/utils/auth';
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from '@/api/system/user';
+import { Splitpanes, Pane } from 'splitpanes';
+import 'splitpanes/dist/splitpanes.css';
 
 const router = useRouter();
 const { proxy } = getCurrentInstance();
@@ -317,16 +325,19 @@ const filterNode = (value, data) => {
   if (!value) return true;
   return data.label.indexOf(value) !== -1;
 };
+
 /** 根据名称筛选部门树 */
 watch(deptName, (val) => {
   proxy.$refs['deptTreeRef'].filter(val);
 });
+
 /** 查询部门下拉树结构 */
 function getDeptTree() {
   deptTreeSelect().then((response) => {
     deptOptions.value = response.data;
   });
 }
+
 /** 查询用户列表 */
 function getList() {
   loading.value = true;
@@ -336,16 +347,19 @@ function getList() {
     total.value = res.total;
   });
 }
+
 /** 节点单击事件 */
 function handleNodeClick(data) {
   queryParams.value.deptId = data.id;
   handleQuery();
 }
+
 /** 搜索按钮操作 */
 function handleQuery() {
   queryParams.value.pageNum = 1;
   getList();
 }
+
 /** 重置按钮操作 */
 function resetQuery() {
   dateRange.value = [];
@@ -354,6 +368,7 @@ function resetQuery() {
   proxy.$refs.deptTreeRef.setCurrentKey(null);
   handleQuery();
 }
+
 /** 删除按钮操作 */
 function handleDelete(row) {
   const userIds = row.userId || ids.value;
@@ -368,6 +383,7 @@ function handleDelete(row) {
     })
     .catch(() => {});
 }
+
 /** 导出按钮操作 */
 function handleExport() {
   proxy.download(
@@ -378,6 +394,7 @@ function handleExport() {
     `user_${new Date().getTime()}.xlsx`
   );
 }
+
 /** 用户状态修改  */
 function handleStatusChange(row) {
   let text = row.status === '0' ? '启用' : '停用';
@@ -393,6 +410,7 @@ function handleStatusChange(row) {
       row.status = row.status === '0' ? '1' : '0';
     });
 }
+
 /** 更多操作 */
 function handleCommand(command, row) {
   switch (command) {
@@ -406,11 +424,13 @@ function handleCommand(command, row) {
       break;
   }
 }
+
 /** 跳转角色分配 */
 function handleAuthRole(row) {
   const userId = row.userId;
   router.push('/system/user-auth/role/' + userId);
 }
+
 /** 重置密码按钮操作 */
 function handleResetPwd(row) {
   proxy
@@ -433,25 +453,30 @@ function handleResetPwd(row) {
     })
     .catch(() => {});
 }
+
 /** 选择条数  */
 function handleSelectionChange(selection) {
   ids.value = selection.map((item) => item.userId);
   single.value = selection.length != 1;
   multiple.value = !selection.length;
 }
+
 /** 导入按钮操作 */
 function handleImport() {
   upload.title = '用户导入';
   upload.open = true;
 }
+
 /** 下载模板操作 */
 function importTemplate() {
   proxy.download('system/user/importTemplate', {}, `user_template_${new Date().getTime()}.xlsx`);
 }
+
 /**文件上传中处理 */
 const handleFileUploadProgress = (event, file, fileList) => {
   upload.isUploading = true;
 };
+
 /** 文件上传成功处理 */
 const handleFileSuccess = (response, file, fileList) => {
   upload.open = false;
@@ -462,10 +487,12 @@ const handleFileSuccess = (response, file, fileList) => {
   });
   getList();
 };
+
 /** 提交上传文件 */
 function submitFileForm() {
   proxy.$refs['uploadRef'].submit();
 }
+
 /** 重置操作表单 */
 function reset() {
   form.value = {
@@ -484,11 +511,13 @@ function reset() {
   };
   proxy.resetForm('userRef');
 }
+
 /** 取消按钮 */
 function cancel() {
   open.value = false;
   reset();
 }
+
 /** 新增按钮操作 */
 function handleAdd() {
   reset();
@@ -500,6 +529,7 @@ function handleAdd() {
     form.value.password = initPassword.value;
   });
 }
+
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset();
@@ -515,6 +545,7 @@ function handleUpdate(row) {
     form.password = '';
   });
 }
+
 /** 提交按钮 */
 function submitForm() {
   proxy.$refs['userRef'].validate((valid) => {
