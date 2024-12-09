@@ -21,7 +21,7 @@ const tagsViewStore = useTagsViewStore();
 onMounted(() => {
   addIframe();
 });
-watch((route) => {
+watchEffect((route) => {
   addIframe();
 });
 function addIframe() {
