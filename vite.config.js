@@ -46,8 +46,8 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          // target: `http://123.57.78.208:5001`,
-          target: `http://localhost:5001`,
+          target: `http://39.105.209.194:5001`,
+          // target: `http://localhost:5001`,
           // target: `http://47.96.137.124:5001`,
           // target: `https://im.dilutech.com/prod-api`,
           changeOrigin: true,
