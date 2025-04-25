@@ -2,6 +2,11 @@ import { defineConfig, loadEnv } from 'vite';
 import path from 'path';
 import createVitePlugins from './vite/plugins';
 
+const baseUrl = 'http://39.105.209.194:5001'; // 后端接口
+// const baseUrl = 'http://localhost:5001'; // 后端接口
+// const baseUrl = 'http://47.96.137.124:5001'; // 后端接口
+// const baseUrl = 'https://im.dilutech.com/prod-api'; // 后端接口
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
@@ -46,12 +51,14 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          target: `http://39.105.209.194:5001`,
-          // target: `http://localhost:5001`,
-          // target: `http://47.96.137.124:5001`,
-          // target: `https://im.dilutech.com/prod-api`,
+          target: baseUrl,
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, ''),
+        },
+        // springdoc proxy
+        '^/v3/api-docs/(.*)': {
+          target: baseUrl,
+          changeOrigin: true,
         },
       },
     },
