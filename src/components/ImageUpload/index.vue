@@ -2,6 +2,7 @@
   <div class="component-upload-image">
     <el-upload
       multiple
+      :disabled="disabled"
       :action="uploadImgUrl"
       list-type="picture-card"
       :on-success="handleUploadSuccess"
@@ -21,7 +22,7 @@
       <el-icon class="avatar-uploader-icon"><plus /></el-icon>
     </el-upload>
     <!-- 上传提示 -->
-    <div class="el-upload__tip" v-if="showTip">
+    <div class="el-upload__tip" v-if="showTip && !disabled">
       请上传
       <template v-if="fileSize">
         大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
@@ -73,6 +74,11 @@ const props = defineProps({
   isShowTip: {
     type: Boolean,
     default: true,
+  },
+  // 禁用组件（仅查看图片）
+  disabled: {
+    type: Boolean,
+    default: false,
   },
   // 拖动排序
   drag: {
@@ -219,9 +225,9 @@ function listToString(list, separator) {
 
 // 初始化拖拽排序
 onMounted(() => {
-  if (props.drag) {
+  if (props.drag && !props.disabled) {
     nextTick(() => {
-      const element = document.querySelector('.el-upload-list');
+      const element = proxy.$refs.imageUpload?.$el?.querySelector('.el-upload-list');
       Sortable.create(element, {
         onEnd: (evt) => {
           const movedItem = fileList.value.splice(evt.oldIndex, 1)[0];
@@ -238,5 +244,9 @@ onMounted(() => {
 // .el-upload--picture-card 控制加号部分
 :deep(.hide .el-upload--picture-card) {
   display: none;
+}
+
+:deep(.el-upload.el-upload--picture-card.is-disabled) {
+  display: none !important;
 }
 </style>
