@@ -10,6 +10,7 @@ const useUserStore = defineStore('user', {
     token: getToken(),
     id: '',
     name: '',
+    nickName: '',
     avatar: '',
     roles: [],
     permissions: [],
@@ -52,6 +53,7 @@ const useUserStore = defineStore('user', {
             }
             this.id = user.userId;
             this.name = user.userName;
+            this.nickName = user.nickName;
             this.avatar = avatar;
             resolve(res);
           })
