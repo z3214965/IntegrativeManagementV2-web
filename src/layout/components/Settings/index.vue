@@ -1,5 +1,5 @@
 <template>
-  <el-drawer v-model="showSettings" :withHeader="false" direction="rtl" size="300px">
+  <el-drawer v-model="showSettings" :withHeader="false" :lock-scroll="false" direction="rtl" size="300px">
     <div class="setting-drawer-title">
       <h3 class="drawer-title">主题风格设置</h3>
     </div>
@@ -54,6 +54,13 @@
     </div>
 
     <div class="drawer-item">
+      <span>显示页签图标</span>
+      <span class="comp-style">
+        <el-switch v-model="settingsStore.tagsIcon" :disabled="!settingsStore.tagsView" class="drawer-switch" />
+      </span>
+    </div>
+
+    <div class="drawer-item">
       <span>固定 Header</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.fixedHeader" class="drawer-switch" />
@@ -71,6 +78,13 @@
       <span>动态标题</span>
       <span class="comp-style">
         <el-switch v-model="settingsStore.dynamicTitle" class="drawer-switch" />
+      </span>
+    </div>
+
+    <div class="drawer-item">
+      <span>底部版权</span>
+      <span class="comp-style">
+        <el-switch v-model="settingsStore.footerVisible" class="drawer-switch" />
       </span>
     </div>
 
@@ -122,9 +136,11 @@ function saveSetting() {
   let layoutSetting = {
     topNav: storeSettings.value.topNav,
     tagsView: storeSettings.value.tagsView,
+    tagsIcon: storeSettings.value.tagsIcon,
     fixedHeader: storeSettings.value.fixedHeader,
     sidebarLogo: storeSettings.value.sidebarLogo,
     dynamicTitle: storeSettings.value.dynamicTitle,
+    footerVisible: storeSettings.value.footerVisible,
     sideTheme: storeSettings.value.sideTheme,
     theme: storeSettings.value.theme,
   };
