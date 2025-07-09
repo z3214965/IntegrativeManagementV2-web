@@ -86,8 +86,18 @@
         </div>
         <div class="margin24 flex-box">
           <div class="posr" style="width: 65%">
-            <input type="number" placeholder="验证码" class="codeInput input" v-model="data.loginForm.code" data.autocomplete="off" />
-            <svg focusable="false" class="svg2" data-icon="safety" width="1em" height="1em" fill="currentColor" aria-hidden="true" viewBox="0 0 1024 1024">
+            <input type="number" placeholder="验证码" class="input" style="height: 40px" v-model="data.loginForm.code" data.autocomplete="off" />
+            <svg
+              focusable="false"
+              class="svg2"
+              style="top: 12px"
+              data-icon="safety"
+              width="1em"
+              height="1em"
+              fill="currentColor"
+              aria-hidden="true"
+              viewBox="0 0 1024 1024"
+            >
               <path
                 d="M512 64L128 192v384c0 212.1 171.9 384 384 384s384-171.9 384-384V192L512 64zm312 512c0 172.3-139.7 312-312 312S200 748.3 200 576V246l312-110 312 110v330z"
               ></path>
@@ -96,14 +106,14 @@
               ></path>
             </svg>
           </div>
-          <img :src="data.codeUrl" alt="" class="codeImg" @click="getCode" />
+          <img :src="data.codeUrl" alt="" style="cursor: pointer" @click="getCode" />
         </div>
       </form>
       <!-- 手机号登录 -->
       <form action="" class="form cellLogin" v-if="data.activeKey == 1" @keyup.enter="handleLogin">
         <div class="posr">
           <input
-            class="height40 margin33 input"
+            class="height40 margin36 input"
             type="text"
             placeholder="暂不支持大陆地区以外的手机号"
             autocomplete="off"
@@ -115,7 +125,7 @@
             ></path>
           </svg>
         </div>
-        <div class="flex-box height40 margin33">
+        <div class="flex-box height40 margin36">
           <input type="password" placeholder="6位数字" class="password" v-model="data.phoneLoginForm.code" autocomplete="off" />
           <button class="codeBtn" @click.prevent="btnValueFun">
             {{ data.btnValue }}
@@ -135,14 +145,15 @@
 </template>
 
 <script setup name="LoginPage">
+import Cookies from 'js-cookie';
 import { getALYCode } from '@/api/tool/gen';
 import { getCodeImg } from '@/api/login';
-import Cookies from 'js-cookie';
 import { decrypt } from '@/utils/jsencrypt';
+import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const userStore = useUserStore();
 const { proxy } = getCurrentInstance();
 
 const data = reactive({
@@ -168,7 +179,7 @@ const data = reactive({
   btnLoading: false, //登录按钮标识符
   interval: null, // 短信验证码获取定时器
   passwordInvisible: true, //密码框右侧图标展示标识符
-  passwordType: 'password', //密码框展示密码类型
+  passwordType: '', //密码框展示密码类型
 });
 
 const load = () => {
@@ -191,6 +202,7 @@ const load = () => {
   getCode();
   getCookie();
 };
+
 //获取验证码图片
 const getCode = () => {
   getCodeImg().then((res) => {
@@ -201,6 +213,7 @@ const getCode = () => {
     }
   });
 };
+
 /**
  * 获取阿里云验证码
  * 倒计时
@@ -234,6 +247,7 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 //查看是否有登录信息
 const getCookie = () => {
   const username = Cookies.get('username');
@@ -245,6 +259,7 @@ const getCookie = () => {
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 };
+
 //设置用户信息
 const handleLogin = () => {
   if (data.activeKey == 1) {
@@ -259,13 +274,13 @@ const handleLogin = () => {
       return;
     }
     data.btnLoading = true;
-    store
-      .dispatch('Login', data.phoneLoginForm)
+    userStore
+      .login(data.phoneLoginForm)
       .then(() => {
         if (localStorage.getItem('DLverificationCodeRegister')) {
           localStorage.removeItem('DLverificationCodeRegister');
         }
-        jumpToLoginPlatform({ type: route.query.type });
+        jumpToLoginPlatform();
       })
       .catch(() => {
         data.btnLoading = false;
@@ -284,10 +299,10 @@ const handleLogin = () => {
       return;
     }
     data.btnLoading = true;
-    store
-      .dispatch('Login', data.loginForm)
+    userStore
+      .login(data.loginForm)
       .then((res) => {
-        jumpToLoginPlatform({ type: route.query.type });
+        jumpToLoginPlatform();
         if (localStorage.getItem('DLverificationCodeRegister')) {
           localStorage.removeItem('DLverificationCodeRegister');
         }
@@ -299,16 +314,14 @@ const handleLogin = () => {
       });
   }
 };
+
 /**
  * 去往找回密码页面
  */
 const retrievePassword = () => {
   router.push({
     path: '/passWordRetrieve',
-    query: {
-      type: route.query.type,
-      callback: route.query.callback,
-    },
+    query: route.query,
   });
 };
 
@@ -318,34 +331,18 @@ const retrievePassword = () => {
 const userRegistration = () => {
   router.push({
     path: '/userReg',
-    query: {
-      type: route.query.type,
-      callback: route.query.callback,
-    },
+    query: route.query,
   });
 };
 
 /**
  * 跳转回登录平台
  */
-const jumpToLoginPlatform = ({ type }) => {
-  if (type) {
-    let callback = decodeURIComponent(route.query.callback);
-    let indexValue = callback.indexOf('?');
-    let token = store.state.user.token;
-    let tokenType = '?token=';
-    if (indexValue != -1) {
-      tokenType = '&token=';
-    }
-    switch (type) {
-      case 'h5-vp':
-        window.open(callback + tokenType + token, '_top');
-        break;
-      case 'web-vp':
-      case 'web-dm':
-        window.open(callback + tokenType + token, '_top');
-        break;
-    }
+const jumpToLoginPlatform = async () => {
+  const to = await userStore.getOtherPlatformsParameter(); //前往平台参数
+  await userStore.deleteOtherPlatformsParameter(); //删除参数
+  if (to.type && to.callback) {
+    userStore.goToAnotherPlatform(to);
   } else {
     router.push({ path: data.redirect || '/' }).catch(() => {});
   }
@@ -370,7 +367,7 @@ load();
   box-sizing: border-box;
   background-size: cover;
   border-radius: 6px;
-  background: #ffffff;
+  background-color: #ffffff;
   padding: 25px 25px 5px 25px;
 }
 
@@ -447,8 +444,8 @@ h1 {
 .height40 {
   height: 40px;
 }
-.margin33 {
-  margin-bottom: 33px;
+.margin36 {
+  margin-bottom: 36px;
 }
 /* 短信验证 input前置icon */
 .svg1 {
@@ -490,5 +487,8 @@ h1 {
 .codeImg {
   height: 34px;
   cursor: pointer;
+}
+input[type='password']::-ms-reveal {
+  display: none;
 }
 </style>

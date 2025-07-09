@@ -1,37 +1,25 @@
+import router from '@/router';
+import { ElMessageBox } from 'element-plus';
 import { login, logout, getInfo } from '@/api/login';
 import { getToken, setToken, removeToken } from '@/utils/auth';
+import { isHttp, isEmpty } from '@/utils/validate';
 import defAva from '@/assets/images/profile.jpg';
 
-const user = {
-  state: {
+const DL_HREF = 'DL_href';
+
+const useUserStore = defineStore('user', {
+  state: () => ({
     token: getToken(),
+    id: '',
     name: '',
+    nickName: '',
     avatar: '',
     roles: [],
     permissions: [],
-  },
-
-  mutations: {
-    SET_TOKEN: (state, token) => {
-      state.token = token;
-    },
-    SET_NAME: (state, name) => {
-      state.name = name;
-    },
-    SET_AVATAR: (state, avatar) => {
-      state.avatar = avatar;
-    },
-    SET_ROLES: (state, roles) => {
-      state.roles = roles;
-    },
-    SET_PERMISSIONS: (state, permissions) => {
-      state.permissions = permissions;
-    },
-  },
-
+  }),
   actions: {
     // 登录
-    Login({ commit }, userInfo) {
+    login(userInfo) {
       const username = userInfo.username.trim();
       const password = userInfo.password;
       const code = userInfo.code;
@@ -40,7 +28,7 @@ const user = {
         login(username, password, code, uuid)
           .then((res) => {
             setToken(res.token);
-            commit('SET_TOKEN', res.token);
+            this.token = res.token;
             resolve();
           })
           .catch((error) => {
@@ -48,24 +36,43 @@ const user = {
           });
       });
     },
-
     // 获取用户信息
-    GetInfo({ commit, state }) {
+    getInfo() {
       return new Promise((resolve, reject) => {
         getInfo()
           .then((res) => {
             const user = res.user;
-            const avatar = user.avatar == '' || user.avatar == null ? defAva : import.meta.env.VITE_APP_BASE_API + user.avatar;
-
+            let avatar = user.avatar || '';
+            if (!isHttp(avatar)) {
+              avatar = isEmpty(avatar) ? defAva : import.meta.env.VITE_APP_BASE_API + avatar;
+            }
             if (res.roles && res.roles.length > 0) {
               // 验证返回的roles是否是一个非空数组
-              commit('SET_ROLES', res.roles);
-              commit('SET_PERMISSIONS', res.permissions);
+              this.roles = res.roles;
+              this.permissions = res.permissions;
             } else {
-              commit('SET_ROLES', ['ROLE_DEFAULT']);
+              this.roles = ['ROLE_DEFAULT'];
             }
-            commit('SET_NAME', user.userName);
-            commit('SET_AVATAR', avatar);
+            this.id = user.userId;
+            this.name = user.userName;
+            this.nickName = user.nickName;
+            this.avatar = avatar;
+            /* 初始密码提示 */
+            if (res.isDefaultModifyPwd) {
+              ElMessageBox.confirm('您的密码还是初始密码，请修改密码！', '安全提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+                .then(() => {
+                  router.push({ name: 'Profile', params: { activeTab: 'resetPwd' } });
+                })
+                .catch(() => {});
+            }
+            /* 过期密码提示 */
+            if (!res.isDefaultModifyPwd && res.isPasswordExpired) {
+              ElMessageBox.confirm('您的密码已过期，请尽快修改密码！', '安全提示', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' })
+                .then(() => {
+                  router.push({ name: 'Profile', params: { activeTab: 'resetPwd' } });
+                })
+                .catch(() => {});
+            }
             resolve(res);
           })
           .catch((error) => {
@@ -73,15 +80,14 @@ const user = {
           });
       });
     },
-
     // 退出系统
-    LogOut({ commit, state }) {
+    logOut() {
       return new Promise((resolve, reject) => {
-        logout(state.token)
+        logout(this.token)
           .then(() => {
-            commit('SET_TOKEN', '');
-            commit('SET_ROLES', []);
-            commit('SET_PERMISSIONS', []);
+            this.token = '';
+            this.roles = [];
+            this.permissions = [];
             removeToken();
             resolve();
           })
@@ -91,15 +97,37 @@ const user = {
       });
     },
 
-    // 前端 登出
-    FedLogOut({ commit }) {
-      return new Promise((resolve) => {
-        commit('SET_TOKEN', '');
-        removeToken();
-        resolve();
-      });
+    //获取从其他平台跳转来存储的参数
+    getOtherPlatformsParameter() {
+      return JSON.parse(sessionStorage.getItem(DL_HREF) || '{}');
+    },
+
+    //设置从其他平台跳转来存储参数
+    setOtherPlatformsParameter(data) {
+      sessionStorage.setItem(DL_HREF, JSON.stringify(data));
+    },
+
+    //删除从其他平台跳转来存储的参数
+    deleteOtherPlatformsParameter() {
+      sessionStorage.removeItem(DL_HREF);
+    },
+
+    //跳转至其他平台
+    goToAnotherPlatform(to) {
+      const type = to.type;
+      const callback = decodeURIComponent(to.callback);
+      const token = callback.indexOf('?') === -1 ? '?token=' + this.token : '&token=' + this.token;
+      switch (type) {
+        case 'h5-vp':
+          window.open(callback + token, '_top');
+          break;
+        case 'web-vp':
+        case 'web-dm':
+          window.open(callback + token, '_top');
+          break;
+      }
     },
   },
-};
+});
 
-export default user;
+export default useUserStore;

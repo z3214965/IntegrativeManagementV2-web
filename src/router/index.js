@@ -1,4 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router';
+/* Layout */
 import Layout from '@/layout';
 
 /**
@@ -12,6 +13,8 @@ import Layout from '@/layout';
  * redirect: noRedirect             // 当设置 noRedirect 的时候该路由在面包屑导航中不可被点击
  * name:'router-name'               // 设定路由的名字，一定要填写不然使用<keep-alive>时会出现各种问题
  * query: '{"id": 1, "name": "dl"}' // 访问路由的默认传递参数
+ * roles: ['admin', 'common']       // 访问路由的角色权限
+ * permissions: ['a:a:a', 'b:b:b']  // 访问路由的菜单权限
  * meta : {
     noCache: true                   // 如果设置为true，则不会被 <keep-alive> 缓存(默认 false)
     title: 'title'                  // 设置该路由在侧边栏和面包屑中展示的名字
@@ -23,17 +26,6 @@ import Layout from '@/layout';
 
 // 公共路由
 export const constantRoutes = [
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index.vue'),
-      },
-    ],
-  },
   {
     path: '/login',
     component: () => import('@/views/system/loginInfor/login'),
@@ -48,6 +40,17 @@ export const constantRoutes = [
     path: '/passWordRetrieve',
     component: () => import('@/views/system/loginInfor/passWordRetrieve'),
     hidden: true,
+  },
+  {
+    path: '/redirect',
+    component: Layout,
+    hidden: true,
+    children: [
+      {
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index.vue'),
+      },
+    ],
   },
   {
     path: '/register',
@@ -84,17 +87,22 @@ export const constantRoutes = [
     redirect: 'noredirect',
     children: [
       {
-        path: 'profile',
+        path: 'profile/:activeTab?',
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' },
       },
     ],
   },
+];
+
+// 动态路由，基于用户权限动态去加载
+export const dynamicRoutes = [
   {
     path: '/system/user-auth',
     component: Layout,
     hidden: true,
+    permissions: ['system:user:edit'],
     children: [
       {
         path: 'role/:userId(\\d+)',
@@ -108,6 +116,7 @@ export const constantRoutes = [
     path: '/system/role-auth',
     component: Layout,
     hidden: true,
+    permissions: ['system:role:edit'],
     children: [
       {
         path: 'user/:roleId(\\d+)',
@@ -121,6 +130,7 @@ export const constantRoutes = [
     path: '/system/dict-data',
     component: Layout,
     hidden: true,
+    permissions: ['system:dict:list'],
     children: [
       {
         path: 'index/:dictId(\\d+)',
@@ -134,9 +144,10 @@ export const constantRoutes = [
     path: '/monitor/job-log',
     component: Layout,
     hidden: true,
+    permissions: ['monitor:job:list'],
     children: [
       {
-        path: 'index',
+        path: 'index/:jobId(\\d+)',
         component: () => import('@/views/monitor/job/log'),
         name: 'JobLog',
         meta: { title: '调度日志', activeMenu: '/monitor/job' },
@@ -147,6 +158,7 @@ export const constantRoutes = [
     path: '/tool/gen-edit',
     component: Layout,
     hidden: true,
+    permissions: ['tool:gen:edit'],
     children: [
       {
         path: 'index/:tableId(\\d+)',
@@ -164,9 +176,8 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else {
-      return { top: 0 };
     }
+    return { top: 0 };
   },
 });
 

@@ -39,10 +39,12 @@
 <script setup name="PhoneRetrieve">
 import { getALYCode, resetPassWordByPhone } from '@/api/tool/gen';
 import { getToken, setToken } from '@/utils/auth';
+import { useRoute, useRouter } from 'vue-router';
+import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const store = useUserStore();
 const { proxy } = getCurrentInstance();
 
 const data = reactive({
@@ -55,12 +57,14 @@ const data = reactive({
   ALYCode: null, //阿里云获取到的验证码
   message: null, //修改完后提示消息
 });
+
 const load = () => {
   let ALYCode = localStorage.getItem('DLverificationCode');
   if (ALYCode) {
     data.ALYCode = parseInt(ALYCode);
   }
 };
+
 /**
  * 立即验证
  */
@@ -91,6 +95,7 @@ const submitForm = () => {
     proxy.$message.warning('验证码输入错误！请重新输入');
   }
 };
+
 /**
  * 验证手机号是否正确
  */
@@ -101,6 +106,7 @@ const isCellPhone = (val) => {
     return true;
   }
 };
+
 /**
  * 验证码获取
  * 倒计时
@@ -116,7 +122,7 @@ const btnValueFun = async () => {
   }
   let token = await getToken();
   if (token) {
-    await store.dispatch('LogOut');
+    await store.LogOut();
   }
   if (!data.interval && data.form.cellPhoneNumber) {
     let ALYCode = await getALYCode(data.form.cellPhoneNumber + '/2');
@@ -140,6 +146,7 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 /**
  * 确认修改密码
  */
@@ -161,39 +168,30 @@ const editPassWord = async () => {
     }, 1000);
   }
 };
+
 /**
  * 跳转至数据管理平台
  * @param token token信息
  */
-const loginFun = (token) => {
+const loginFun = async (token) => {
   if (!token) {
     router.push({
       path: '/login',
-      query: {
-        type: route.query.type,
-        callback: route.query.callback,
-      },
+      query: route.query,
     });
   } else {
-    let type = null;
-    if (route.query.type) {
-      type = route.query.type;
-      switch (type) {
-        case 'h5-vp':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-      }
+    const to = await store.getOtherPlatformsParameter(); //前往平台参数
+    await store.deleteOtherPlatformsParameter(); //删除参数
+    if (to.type && to.callback) {
+      store.goToAnotherPlatform(to);
     } else {
       setToken(token); //cookie
-      store.state.user.token = token;
+      store.token = token;
       router.push({ path: '/index' });
     }
   }
 };
+
 load();
 </script>
 
@@ -250,7 +248,7 @@ load();
     display: table-cell;
     vertical-align: middle;
   }
-  ::v-deep .is-icon {
+  :deep(.is-icon) {
     background: transparent;
   }
   .label {
@@ -296,7 +294,6 @@ load();
   }
   button {
     color: white;
-    padding: 10px 20px;
     font-size: 14px;
     border-radius: 4px;
     display: inline-block;

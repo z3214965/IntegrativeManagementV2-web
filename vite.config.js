@@ -2,6 +2,11 @@ import { defineConfig, loadEnv } from 'vite';
 import path from 'path';
 import createVitePlugins from './vite/plugins';
 
+// const baseUrl = 'http://39.105.209.194:5001'; // 后端接口
+const baseUrl = 'http://localhost:5001'; // 后端接口
+// const baseUrl = 'http://47.96.137.124:5001'; // 后端接口
+// const baseUrl = 'https://im.dilutech.com/prod-api'; // 后端接口
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd());
@@ -23,6 +28,21 @@ export default defineConfig(({ mode, command }) => {
       // https://cn.vitejs.dev/config/#resolve-extensions
       extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
+    // 打包配置
+    build: {
+      // https://vite.dev/config/build-options.html
+      sourcemap: command === 'build' ? false : 'inline',
+      outDir: 'dist',
+      assetsDir: 'assets',
+      chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          chunkFileNames: 'static/js/[name]-[hash].js',
+          entryFileNames: 'static/js/[name]-[hash].js',
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+        },
+      },
+    },
     // vite 相关配置
     server: {
       port: 4301,
@@ -31,11 +51,14 @@ export default defineConfig(({ mode, command }) => {
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
         '/dev-api': {
-          // target: `http://localhost:6001`,
-          target: `http://192.168.1.56:5001`,
-          // target: `https://im.dilutech.com/prod-api`,
+          target: baseUrl,
           changeOrigin: true,
           rewrite: (p) => p.replace(/^\/dev-api/, ''),
+        },
+        // springdoc proxy
+        '^/v3/api-docs/(.*)': {
+          target: baseUrl,
+          changeOrigin: true,
         },
       },
     },

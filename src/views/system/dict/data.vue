@@ -1,16 +1,16 @@
 <template>
   <div class="app-container">
-    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
+    <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
       <el-form-item label="字典名称" prop="dictType">
-        <el-select v-model="queryParams.dictType">
+        <el-select v-model="queryParams.dictType" style="width: 200px">
           <el-option v-for="item in typeOptions" :key="item.dictId" :label="item.dictName" :value="item.dictType" />
         </el-select>
       </el-form-item>
       <el-form-item label="字典标签" prop="dictLabel">
-        <el-input v-model="queryParams.dictLabel" placeholder="请输入字典标签" clearable @keyup.enter="handleQuery" />
+        <el-input v-model="queryParams.dictLabel" placeholder="请输入字典标签" clearable style="width: 200px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="queryParams.status" placeholder="数据状态" clearable>
+        <el-select v-model="queryParams.status" placeholder="数据状态" clearable style="width: 200px">
           <el-option v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -44,8 +44,10 @@
       <el-table-column label="字典编码" align="center" prop="dictCode" />
       <el-table-column label="字典标签" align="center" prop="dictLabel">
         <template #default="scope">
-          <span v-if="scope.row.listClass == '' || scope.row.listClass == 'default'">{{ scope.row.dictLabel }}</span>
-          <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass">{{ scope.row.dictLabel }}</el-tag>
+          <span v-if="(scope.row.listClass == '' || scope.row.listClass == 'default') && (scope.row.cssClass == '' || scope.row.cssClass == null)">
+            {{ scope.row.dictLabel }}
+          </span>
+          <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass" :class="scope.row.cssClass">{{ scope.row.dictLabel }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="字典键值" align="center" prop="dictValue" />
@@ -61,10 +63,10 @@
           <span>{{ parseTime(scope.row.createTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button type="text" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']">修改</el-button>
-          <el-button type="text" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:dict:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:dict:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -91,12 +93,12 @@
         </el-form-item>
         <el-form-item label="回显样式" prop="listClass">
           <el-select v-model="form.listClass">
-            <el-option v-for="item in listClassOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            <el-option v-for="item in listClassOptions" :key="item.value" :label="item.label + '(' + item.value + ')'" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="form.status">
-            <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
+            <el-radio v-for="dict in sys_normal_disable" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
@@ -114,6 +116,7 @@
 </template>
 
 <script setup name="Data">
+import useDictStore from '@/store/modules/dict';
 import { optionselect as getDictOptionselect, getType } from '@/api/system/dict/type';
 import { listData, getData, delData, addData, updateData } from '@/api/system/dict/data';
 
@@ -147,8 +150,8 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    dictName: undefined,
     dictType: undefined,
+    dictLabel: undefined,
     status: undefined,
   },
   rules: {
@@ -216,7 +219,7 @@ function handleClose() {
 /** 重置按钮操作 */
 function resetQuery() {
   proxy.resetForm('queryRef');
-  queryParams.value.dictType = defaultDictType;
+  queryParams.value.dictType = defaultDictType.value;
   handleQuery();
 }
 /** 新增按钮操作 */
@@ -248,12 +251,14 @@ function submitForm() {
     if (valid) {
       if (form.value.dictCode != undefined) {
         updateData(form.value).then((response) => {
+          useDictStore().removeDict(queryParams.value.dictType);
           proxy.$modal.msgSuccess('修改成功');
           open.value = false;
           getList();
         });
       } else {
         addData(form.value).then((response) => {
+          useDictStore().removeDict(queryParams.value.dictType);
           proxy.$modal.msgSuccess('新增成功');
           open.value = false;
           getList();
@@ -273,6 +278,7 @@ function handleDelete(row) {
     .then(() => {
       getList();
       proxy.$modal.msgSuccess('删除成功');
+      useDictStore().removeDict(queryParams.value.dictType);
     })
     .catch(() => {});
 }

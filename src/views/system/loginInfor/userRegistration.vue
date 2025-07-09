@@ -96,10 +96,12 @@ import { registeredUser } from '@/api/system/user.js';
 import { getALYCode } from '@/api/tool/gen.js';
 import { getIndustry } from '@/api/login.js';
 import { setToken, getToken } from '@/utils/auth';
+import { useRoute, useRouter } from 'vue-router';
+import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
 const router = useRouter();
-const store = useStore();
+const store = useUserStore();
 const { proxy } = getCurrentInstance();
 
 const data = reactive({
@@ -123,6 +125,7 @@ const data = reactive({
   industryCategoriesList: [], //行业小类list
   industryOfSmallUUID: false, //行业小类显隐
 });
+
 const load = () => {
   let ALYCode = localStorage.getItem('DLverificationCodeRegister');
   if (ALYCode) {
@@ -149,6 +152,7 @@ const load = () => {
     });
   });
 };
+
 const submitForm = () => {
   try {
     if (!data.userInfo.professionId) {
@@ -215,6 +219,7 @@ const submitForm = () => {
     console.log(error);
   }
 };
+
 /**
  * 获取阿里云验证码
  * 倒计时
@@ -230,7 +235,7 @@ const btnValueFun = async () => {
   }
   let token = await getToken();
   if (token) {
-    await store.dispatch('LogOut');
+    await store.LogOut();
   }
   if (!data.interval && data.userInfo.phonenumber) {
     let ALYCode = await getALYCode(data.userInfo.phonenumber + '/1');
@@ -254,38 +259,30 @@ const btnValueFun = async () => {
     }, 1000);
   }
 };
+
 /**
  * 跳转至数据管理平台
  */
-const loginFun = (token) => {
+const loginFun = async (token) => {
   if (!token) {
     router.push({
       path: '/login',
-      query: {
-        type: route.query.type,
-        callback: route.query.callback,
-      },
+      query: route.query,
     });
     return;
   } else {
-    let type = route.query.type;
-    if (type) {
-      switch (type) {
-        case 'h5-vp':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(decodeURIComponent(route.query.callback) + '?token=' + token, '_top');
-          break;
-      }
+    const to = await store.getOtherPlatformsParameter(); //前往平台参数
+    await store.deleteOtherPlatformsParameter(); //删除参数
+    if (to.type && to.callback) {
+      store.goToAnotherPlatform(to);
     } else {
       setToken(token); //cookie
-      store.state.user.token = token; //$store
+      store.token = token; //$store
       router.push({ path: '/index' });
     }
   }
 };
+
 /**
  * 显隐行业内容
  */
@@ -299,6 +296,7 @@ const toSelectArea = () => {
   selectCountry(data.currentArea.industryCategories);
   selectProvince(data.currentArea.industryOfSmall);
 };
+
 /**
  * 选择第一大类
  */
@@ -321,6 +319,7 @@ const selectCountry = (industryCategories) => {
   }
   data.industryOfSmall = '';
 };
+
 //选择第二小类
 const selectProvince = (pro, isClose) => {
   if (pro) {
@@ -331,11 +330,13 @@ const selectProvince = (pro, isClose) => {
     }
   }
 };
+
 //下拉菜单的收起
 const eventListener = () => {
   data.multistageUUID = false;
   data.searchCity = '';
 };
+
 load();
 </script>
 
@@ -433,7 +434,6 @@ load();
   }
   button {
     color: white;
-    padding: 10px 20px;
     font-size: 14px;
     border-radius: 4px;
     display: inline-block;

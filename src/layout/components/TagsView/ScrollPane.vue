@@ -5,10 +5,12 @@
 </template>
 
 <script setup>
+import useTagsViewStore from '@/store/modules/tagsView';
+
 const tagAndTagSpacing = ref(4);
 const { proxy } = getCurrentInstance();
 
-const scrollWrapper = computed(() => proxy.$refs.scrollContainer.$refs.wrap$);
+const scrollWrapper = computed(() => proxy.$refs.scrollContainer.$refs.wrapRef);
 
 onMounted(() => {
   scrollWrapper.value.addEventListener('scroll', emitScroll, true);
@@ -27,8 +29,8 @@ const emitScroll = () => {
   emits('scroll');
 };
 
-const store = useStore();
-const visitedViews = computed(() => store.state.tagsView.visitedViews);
+const tagsViewStore = useTagsViewStore();
+const visitedViews = computed(() => tagsViewStore.visitedViews);
 
 function moveToTarget(currentTag) {
   const $container = proxy.$refs.scrollContainer.$el;
@@ -92,7 +94,7 @@ defineExpose({
     bottom: 0px;
   }
   :deep(.el-scrollbar__wrap) {
-    height: 49px;
+    height: 39px;
   }
 }
 </style>

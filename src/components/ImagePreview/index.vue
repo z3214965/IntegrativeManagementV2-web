@@ -1,5 +1,5 @@
 <template>
-  <el-image :src="`${realSrc}`" fit="cover" :style="`width:${realWidth};height:${realHeight};`" :preview-src-list="realSrcList" append-to-body="true">
+  <el-image :src="`${realSrc}`" fit="cover" :style="`width:${realWidth};height:${realHeight};`" :preview-src-list="realSrcList" preview-teleported>
     <template #error>
       <div class="image-slot">
         <el-icon><picture-filled /></el-icon>
@@ -14,7 +14,7 @@ import { isExternal } from '@/utils/validate';
 const props = defineProps({
   src: {
     type: String,
-    required: true,
+    default: '',
   },
   width: {
     type: [Number, String],
@@ -27,6 +27,9 @@ const props = defineProps({
 });
 
 const realSrc = computed(() => {
+  if (!props.src) {
+    return;
+  }
   let real_src = props.src.split(',')[0];
   if (isExternal(real_src)) {
     return real_src;
@@ -35,6 +38,9 @@ const realSrc = computed(() => {
 });
 
 const realSrcList = computed(() => {
+  if (!props.src) {
+    return;
+  }
   let real_src_list = props.src.split(',');
   let srcList = [];
   real_src_list.forEach((item) => {
