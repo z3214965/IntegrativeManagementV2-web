@@ -4,7 +4,7 @@
     <div class="login-box">
       <h3 class="title">账号登录</h3>
       <div class="login-select flex-box">
-        <div class="activeBtn" :class="{ active: data.activeKey == 1 }" @click="data.activeKey = 1">手机验证登录</div>
+        <!-- <div class="activeBtn" :class="{ active: data.activeKey == 1 }" @click="data.activeKey = 1">手机验证登录</div> -->
         <div
           class="activeBtn"
           :class="{ active: data.activeKey == 2 }"
@@ -137,8 +137,8 @@
         {{ data.btnLoading ? '登录中' : '登录' }}
       </button>
       <div class="margin24 flex-box fontColor">
-        <div class="pointer" @click="retrievePassword">忘记密码？</div>
-        <div class="pointer" @click="userRegistration">注册新账号</div>
+        <!-- <div class="pointer" @click="retrievePassword">忘记密码？</div> -->
+        <!-- <div class="pointer" @click="userRegistration">注册新账号</div> -->
       </div>
     </div>
   </div>
