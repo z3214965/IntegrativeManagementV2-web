@@ -1,6 +1,5 @@
 /**
  * 通用css样式布局处理
- * Copyright (c) 2019 dilu
  */
 
 /** 基础通用 **/
@@ -74,7 +73,6 @@ h6 {
 .el-form .el-form-item__label {
   font-weight: 700;
 }
-
 .el-dialog:not(.is-fullscreen) {
   margin-top: 6vh !important;
 }
@@ -119,13 +117,6 @@ h6 {
   justify-content: flex-end;
   margin-top: 20px;
   background-color: transparent !important;
-}
-
-/* 分页器定位 */
-.pagination-container .el-pagination {
-  position: absolute;
-  right: 0;
-  top: 0;
 }
 
 /* 弹窗中的分页器 */
@@ -219,8 +210,6 @@ h6 {
 }
 
 .card-box {
-  padding-right: 15px;
-  padding-left: 15px;
   margin-bottom: 10px;
 }
 

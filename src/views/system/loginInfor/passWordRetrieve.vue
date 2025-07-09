@@ -1,6 +1,6 @@
 <template>
   <div class="PhoneRetrieve">
-    <h1>迪路科技</h1>
+    <h1>一体化生产平台</h1>
     <div id="contentDiv">
       <div id="registerDiv">
         <span style="font-size: 25px; color: #373d41; padding: 20px 0"> 重置密码 </span>

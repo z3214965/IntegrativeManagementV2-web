@@ -48,7 +48,7 @@
 
 <script setup>
 import Fuse from 'fuse.js';
-import { getNormalPath } from '@/utils/dilu';
+import { getNormalPath } from '@/utils/dz';
 import { isHttp } from '@/utils/validate';
 import useSettingsStore from '@/store/modules/settings';
 import usePermissionStore from '@/store/modules/permission';

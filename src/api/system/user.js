@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { parseStrEmpty } from '@/utils/dilu';
+import { parseStrEmpty } from '@/utils/dz';
 
 // 查询用户列表
 export function listUser(query) {
@@ -135,7 +135,7 @@ export function deptTreeSelect() {
   });
 }
 
-// 注册用户(by dilu)
+// 注册用户
 export function registeredUser(data) {
   return request({
     url: '/system/user/registeredUser',
@@ -144,7 +144,7 @@ export function registeredUser(data) {
   });
 }
 
-//获取N天内用户使用记录(by dilu)
+//获取N天内用户使用记录
 export const getUserRecord = () => {
   return request({
     url: '/dl/im/v1/statistics/sys-user-use/300',

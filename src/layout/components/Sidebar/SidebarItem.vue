@@ -32,7 +32,7 @@
 <script setup>
 import { isExternal } from '@/utils/validate';
 import AppLink from './Link';
-import { getNormalPath } from '@/utils/dilu';
+import { getNormalPath } from '@/utils/dz';
 
 const props = defineProps({
   // route object

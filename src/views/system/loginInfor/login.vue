@@ -1,6 +1,6 @@
 <template>
   <div id="login">
-    <h1>迪路科技</h1>
+    <h1>一体化生产平台</h1>
     <div class="login-box">
       <h3 class="title">账号登录</h3>
       <div class="login-select flex-box">
@@ -158,7 +158,7 @@ const { proxy } = getCurrentInstance();
 
 const data = reactive({
   codeUrl: '',
-  activeKey: 1, // tab页标识
+  activeKey: 2, // tab页标识
   btnValue: '获取验证码', // 验证码按钮文字
   ALYCodes: 0, // 短信验证码
   // 验证码开关

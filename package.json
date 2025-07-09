@@ -1,8 +1,8 @@
 {
   "name": "integrative-management",
   "version": "2.0.0",
-  "description": "迪路管理系统",
-  "author": "迪路",
+  "description": "一体化生产平台",
+  "author": "张艺译",
   "license": "MIT",
   "type": "module",
   "scripts": {

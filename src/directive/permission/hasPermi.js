@@ -1,6 +1,5 @@
 /**
  * v-hasPermi 操作权限处理
- * Copyright (c) 2022 dilu
  */
 
 import useUserStore from '@/store/modules/user';

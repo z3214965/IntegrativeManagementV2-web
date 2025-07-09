@@ -37,7 +37,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-register-footer">
-      <span>Copyright © 2018-2022 dilu.vip All Rights Reserved.</span>
+      <span>Copyright © 2014-2025 dz All Rights Reserved.</span>
     </div>
   </div>
 </template>

@@ -1,4 +1,4 @@
-import { parseTime } from './dilu';
+import { parseTime } from './dz';
 
 /**
  * 表格时间格式化

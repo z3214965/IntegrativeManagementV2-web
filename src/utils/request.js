@@ -3,7 +3,7 @@ import router from '@/router';
 import { ElNotification, ElMessageBox, ElMessage, ElLoading } from 'element-plus';
 import { getToken } from '@/utils/auth';
 import errorCode from '@/utils/errorCode';
-import { tansParams, blobValidate } from '@/utils/dilu';
+import { tansParams, blobValidate } from '@/utils/dz';
 import cache from '@/plugins/cache';
 import { saveAs } from 'file-saver';
 import useUserStore from '@/store/modules/user';
