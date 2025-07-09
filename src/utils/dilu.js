@@ -1,6 +1,6 @@
 /**
  * 通用js方法封装处理
- * Copyright (c) 2022 dilu
+ * Copyright (c) 2019 dilu
  */
 
 // 日期格式化
@@ -89,10 +89,13 @@ export function selectDictLabel(datas, value) {
   return actions.join('');
 }
 
-// 回显数据字典（字符串数组）
+// 回显数据字典（字符串、数组）
 export function selectDictLabels(datas, value, separator) {
-  if (value === undefined) {
+  if (value === undefined || value.length === 0) {
     return '';
+  }
+  if (Array.isArray(value)) {
+    value = value.join(',');
   }
   var actions = [];
   var currentSeparator = undefined === separator ? ',' : separator;
@@ -167,37 +170,22 @@ export function handleTree(data, id, parentId, children) {
   };
 
   var childrenListMap = {};
-  var nodeIds = {};
   var tree = [];
-
   for (let d of data) {
-    let parentId = d[config.parentId];
-    if (childrenListMap[parentId] == null) {
-      childrenListMap[parentId] = [];
+    let id = d[config.id];
+    childrenListMap[id] = d;
+    if (!d[config.childrenList]) {
+      d[config.childrenList] = [];
     }
-    nodeIds[d[config.id]] = d;
-    childrenListMap[parentId].push(d);
   }
 
   for (let d of data) {
     let parentId = d[config.parentId];
-    if (nodeIds[parentId] == null) {
+    let parentObj = childrenListMap[parentId];
+    if (!parentObj) {
       tree.push(d);
-    }
-  }
-
-  for (let t of tree) {
-    adaptToChildrenList(t);
-  }
-
-  function adaptToChildrenList(o) {
-    if (childrenListMap[o[config.id]] !== null) {
-      o[config.childrenList] = childrenListMap[o[config.id]];
-    }
-    if (o[config.childrenList]) {
-      for (let c of o[config.childrenList]) {
-        adaptToChildrenList(c);
-      }
+    } else {
+      parentObj[config.childrenList].push(d);
     }
   }
   return tree;
@@ -242,12 +230,6 @@ export function getNormalPath(p) {
 }
 
 // 验证是否为blob格式
-export async function blobValidate(data) {
-  try {
-    const text = await data.text();
-    JSON.parse(text);
-    return false;
-  } catch (error) {
-    return true;
-  }
+export function blobValidate(data) {
+  return data.type !== 'application/json';
 }

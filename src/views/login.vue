@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">迪路后台管理系统</h3>
+      <h3 class="title">{{ title }}</h3>
       <el-form-item prop="username">
         <el-input v-model="loginForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
           <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
@@ -17,7 +17,7 @@
           <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="login-code">
-          <img :src="codeUrl" @click="getCode" class="login-code-img" />
+          <img :src="codeUrl" @click="getCode" class="login-code-img" alt="" />
         </div>
       </el-form-item>
       <el-checkbox v-model="loginForm.rememberMe" style="margin: 0px 0px 25px 0px">记住密码</el-checkbox>
@@ -43,7 +43,10 @@ import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import useUserStore from '@/store/modules/user';
+
+const title = import.meta.env.VITE_APP_TITLE;
 const userStore = useUserStore();
+const route = useRoute();
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const loginForm = ref({
@@ -65,6 +68,15 @@ const captchaEnabled = ref(true);
 // 注册开关
 const register = ref(false);
 const redirect = ref(undefined);
+
+watch(
+  route,
+  (newRoute) => {
+    redirect.value = newRoute.query && newRoute.query.redirect;
+  },
+  { immediate: true }
+);
+
 function handleLogin() {
   proxy.$refs.loginRef.validate((valid) => {
     if (valid) {
@@ -84,7 +96,14 @@ function handleLogin() {
       userStore
         .login(loginForm.value)
         .then(() => {
-          router.push({ path: redirect.value || '/' });
+          const query = route.query;
+          const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+            if (cur !== 'redirect') {
+              acc[cur] = query[cur];
+            }
+            return acc;
+          }, {});
+          router.push({ path: redirect.value || '/', query: otherQueryParams });
         })
         .catch(() => {
           loading.value = false;
@@ -138,6 +157,7 @@ getCookie();
   background: #ffffff;
   width: 400px;
   padding: 25px 25px 5px 25px;
+  z-index: 1;
   .el-input {
     height: 40px;
     input {
@@ -172,7 +192,7 @@ getCookie();
   width: 100%;
   text-align: center;
   color: #fff;
-  font-family: Arial;
+  font-family: Arial, Sans-serif;
   font-size: 12px;
   letter-spacing: 1px;
 }

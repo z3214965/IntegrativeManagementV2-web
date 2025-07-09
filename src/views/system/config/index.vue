@@ -8,7 +8,7 @@
         <el-input v-model="queryParams.configKey" placeholder="请输入参数键名" clearable style="width: 240px" @keyup.enter="handleQuery" />
       </el-form-item>
       <el-form-item label="系统内置" prop="configType">
-        <el-select v-model="queryParams.configType" placeholder="系统内置" clearable>
+        <el-select v-model="queryParams.configType" placeholder="系统内置" clearable style="width: 240px">
           <el-option v-for="dict in sys_yes_no" :key="dict.value" :label="dict.label" :value="dict.value" />
         </el-select>
       </el-form-item>
@@ -52,7 +52,7 @@
       <el-table-column label="参数主键" align="center" prop="configId" />
       <el-table-column label="参数名称" align="center" prop="configName" :show-overflow-tooltip="true" />
       <el-table-column label="参数键名" align="center" prop="configKey" :show-overflow-tooltip="true" />
-      <el-table-column label="参数键值" align="center" prop="configValue" />
+      <el-table-column label="参数键值" align="center" prop="configValue" :show-overflow-tooltip="true" />
       <el-table-column label="系统内置" align="center" prop="configType">
         <template #default="scope">
           <dict-tag :options="sys_yes_no" :value="scope.row.configType" />
@@ -66,8 +66,8 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
         <template #default="scope">
-          <el-button type="text" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']">修改</el-button>
-          <el-button type="text" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:config:remove']">删除</el-button>
+          <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:config:edit']">修改</el-button>
+          <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:config:remove']">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,11 +84,11 @@
           <el-input v-model="form.configKey" placeholder="请输入参数键名" />
         </el-form-item>
         <el-form-item label="参数键值" prop="configValue">
-          <el-input v-model="form.configValue" placeholder="请输入参数键值" />
+          <el-input v-model="form.configValue" type="textarea" placeholder="请输入参数键值" />
         </el-form-item>
         <el-form-item label="系统内置" prop="configType">
           <el-radio-group v-model="form.configType">
-            <el-radio v-for="dict in sys_yes_no" :key="dict.value" :label="dict.value">{{ dict.label }}</el-radio>
+            <el-radio v-for="dict in sys_yes_no" :key="dict.value" :value="dict.value">{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注" prop="remark">

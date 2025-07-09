@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import { getToken } from '@/utils/auth';
-import { isHttp } from '@/utils/validate';
+import { isHttp, isPathMatch } from '@/utils/validate';
 import { isRelogin } from '@/utils/request';
 import useUserStore from '@/store/modules/user';
 import useSettingsStore from '@/store/modules/settings';
@@ -11,17 +11,31 @@ import usePermissionStore from '@/store/modules/permission';
 
 NProgress.configure({ showSpinner: false });
 
-const whiteList = ['/login', '/auth-redirect', '/bind', '/register', '/userReg', '/passWordRetrieve'];
+const whiteList = ['/login', '/register', '/userReg', '/passWordRetrieve'];
+
+const isWhiteList = (path) => {
+  return whiteList.some((pattern) => isPathMatch(pattern, path));
+};
 
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
 
+  useUserStore().deleteOtherPlatformsParameter();
   let token = getToken();
-  if (to.path == '/login' && to.query.type) {
-    await useUserStore().setOtherPlatformsParameter(to.query);
-    if (token) {
+  if (to.path == '/login') {
+    //status代表退出登录跳转来的
+    if (to.query.status) {
+      delete to.query['status'];
       await useUserStore().logOut();
-      token = getToken(); //需要重新获取一次
+      next({ path: '/login', query: to.query });
+      return;
+    }
+    if (to.query.type && to.query.callback) {
+      useUserStore().setOtherPlatformsParameter(to.query);
+      if (token) {
+        useUserStore().goToAnotherPlatform(to.query);
+        return;
+      }
     }
   }
   if (token) {
@@ -30,6 +44,8 @@ router.beforeEach(async (to, from, next) => {
     if (to.path === '/login') {
       next({ path: '/' });
       NProgress.done();
+    } else if (isWhiteList(to.path)) {
+      next();
     } else {
       if (useUserStore().roles.length === 0) {
         isRelogin.show = true;
@@ -70,7 +86,7 @@ router.beforeEach(async (to, from, next) => {
     }
   } else {
     // 没有token
-    if (whiteList.indexOf(to.path) !== -1) {
+    if (isWhiteList(to.path)) {
       // 在免登录白名单，直接进入
       next();
     } else {

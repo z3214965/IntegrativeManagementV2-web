@@ -96,7 +96,7 @@ export function updateUserPwd(oldPassword, newPassword) {
   return request({
     url: '/system/user/profile/updatePwd',
     method: 'put',
-    params: data,
+    data: data,
   });
 }
 
@@ -105,6 +105,7 @@ export function uploadAvatar(data) {
   return request({
     url: '/system/user/profile/avatar',
     method: 'post',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     data: data,
   });
 }
@@ -126,7 +127,15 @@ export function updateAuthRole(data) {
   });
 }
 
-// 注册用户
+// 查询部门下拉树结构
+export function deptTreeSelect() {
+  return request({
+    url: '/system/user/deptTree',
+    method: 'get',
+  });
+}
+
+// 注册用户(by dilu)
 export function registeredUser(data) {
   return request({
     url: '/system/user/registeredUser',
@@ -135,7 +144,7 @@ export function registeredUser(data) {
   });
 }
 
-//获取N天内用户使用记录
+//获取N天内用户使用记录(by dilu)
 export const getUserRecord = () => {
   return request({
     url: '/dl/im/v1/statistics/sys-user-use/300',

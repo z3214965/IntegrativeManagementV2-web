@@ -180,20 +180,10 @@ const loginFun = async (token) => {
       query: route.query,
     });
   } else {
-    let type = null;
-    const to = await store.dispatch('getOtherPlatformsParameter'); //前往平台参数
-    await store.dispatch('deleteOtherPlatformsParameter'); //删除参数
+    const to = await store.getOtherPlatformsParameter(); //前往平台参数
+    await store.deleteOtherPlatformsParameter(); //删除参数
     if (to.type && to.callback) {
-      type = to.type;
-      switch (type) {
-        case 'h5-vp':
-          window.open(decodeURIComponent(to.callback) + '?token=' + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(decodeURIComponent(to.callback) + '?token=' + token, '_top');
-          break;
-      }
+      store.goToAnotherPlatform(to);
     } else {
       setToken(token); //cookie
       store.token = token;
@@ -304,7 +294,6 @@ load();
   }
   button {
     color: white;
-    padding: 10px 20px;
     font-size: 14px;
     border-radius: 4px;
     display: inline-block;

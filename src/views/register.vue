@@ -1,7 +1,7 @@
 <template>
   <div class="register">
     <el-form ref="registerRef" :model="registerForm" :rules="registerRules" class="register-form">
-      <h3 class="title">迪路后台管理系统</h3>
+      <h3 class="title">{{ title }}</h3>
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" size="large" auto-complete="off" placeholder="账号">
           <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
@@ -22,7 +22,7 @@
           <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
         </el-input>
         <div class="register-code">
-          <img :src="codeUrl" @click="getCode" class="register-code-img" />
+          <img :src="codeUrl" @click="getCode" class="register-code-img" alt="" />
         </div>
       </el-form-item>
       <el-form-item style="width: 100%">
@@ -45,6 +45,8 @@
 <script setup>
 import { ElMessageBox } from 'element-plus';
 import { getCodeImg, register } from '@/api/login';
+
+const title = import.meta.env.VITE_APP_TITLE;
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const registerForm = ref({
@@ -69,6 +71,7 @@ const registerRules = {
   password: [
     { required: true, trigger: 'blur', message: '请输入您的密码' },
     { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' },
+    { pattern: /^[^<>"'|\\]+$/, message: '不能包含非法字符：< > " \' \\\ |', trigger: 'blur' },
   ],
   confirmPassword: [
     { required: true, trigger: 'blur', message: '请再次输入您的密码' },
@@ -169,7 +172,7 @@ getCode();
   width: 100%;
   text-align: center;
   color: #fff;
-  font-family: Arial;
+  font-family: Arial, Sans-serif;
   font-size: 12px;
   letter-spacing: 1px;
 }

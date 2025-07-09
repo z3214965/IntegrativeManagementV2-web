@@ -11,7 +11,6 @@
           <div>
             <div class="text-center">
               <userAvatar />
-              <!-- <userAvatar :user="state.user" /> -->
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
@@ -49,12 +48,12 @@
               <span>基本资料</span>
             </div>
           </template>
-          <el-tabs v-model="activeTab">
+          <el-tabs v-model="selectedTab">
             <el-tab-pane label="基本资料" name="userinfo">
               <userInfo :user="state.user" />
             </el-tab-pane>
             <el-tab-pane label="修改密码" name="resetPwd">
-              <resetPwd :user="state.user" />
+              <resetPwd />
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -69,7 +68,8 @@ import userInfo from './userInfo';
 import resetPwd from './resetPwd';
 import { getUserProfile } from '@/api/system/user';
 
-const activeTab = ref('userinfo');
+const route = useRoute();
+const selectedTab = ref('userinfo');
 const state = reactive({
   user: {},
   roleGroup: {},
@@ -84,5 +84,11 @@ function getUser() {
   });
 }
 
-getUser();
+onMounted(() => {
+  const activeTab = route.params && route.params.activeTab;
+  if (activeTab) {
+    selectedTab.value = activeTab;
+  }
+  getUser();
+});
 </script>

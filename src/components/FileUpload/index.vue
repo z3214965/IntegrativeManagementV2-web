@@ -5,6 +5,7 @@
       :action="uploadFileUrl"
       :before-upload="handleBeforeUpload"
       :file-list="fileList"
+      :data="data"
       :limit="limit"
       :on-error="handleUploadError"
       :on-exceed="handleExceed"
@@ -12,13 +13,14 @@
       :show-file-list="false"
       :headers="headers"
       class="upload-file-uploader"
-      ref="upload"
+      ref="fileUpload"
+      v-if="!disabled"
     >
       <!-- 上传按钮 -->
       <el-button type="primary">选取文件</el-button>
     </el-upload>
     <!-- 上传提示 -->
-    <div class="el-upload__tip" v-if="showTip">
+    <div class="el-upload__tip" v-if="showTip && !disabled">
       请上传
       <template v-if="fileSize">
         大小不超过 <b style="color: #f56c6c">{{ fileSize }}MB</b>
@@ -29,13 +31,13 @@
       的文件
     </div>
     <!-- 文件列表 -->
-    <transition-group class="upload-file-list el-upload-list el-upload-list--text" name="el-fade-in-linear" tag="ul">
+    <transition-group ref="uploadFileList" class="upload-file-list el-upload-list el-upload-list--text" name="el-fade-in-linear" tag="ul">
       <li :key="file.uid" class="el-upload-list__item ele-upload-list__item-content" v-for="(file, index) in fileList">
         <el-link :href="`${baseUrl}${file.url}`" :underline="false" target="_blank">
           <span class="el-icon-document"> {{ getFileName(file.name) }} </span>
         </el-link>
         <div class="ele-upload-list__item-content-action">
-          <el-link :underline="false" @click="handleDelete(index)" type="danger">删除</el-link>
+          <el-link :underline="false" @click="handleDelete(index)" type="danger" v-if="!disabled">删除</el-link>
         </div>
       </li>
     </transition-group>
@@ -44,9 +46,19 @@
 
 <script setup>
 import { getToken } from '@/utils/auth';
+import Sortable from 'sortablejs';
 
 const props = defineProps({
   modelValue: [String, Object, Array],
+  // 上传接口地址
+  action: {
+    type: String,
+    default: '/common/upload',
+  },
+  // 上传携带的参数
+  data: {
+    type: Object,
+  },
   // 数量限制
   limit: {
     type: Number,
@@ -60,10 +72,20 @@ const props = defineProps({
   // 文件类型, 例如['png', 'jpg', 'jpeg']
   fileType: {
     type: Array,
-    default: () => ['doc', 'xls', 'ppt', 'txt', 'pdf'],
+    default: () => ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt', 'pdf'],
   },
   // 是否显示提示
   isShowTip: {
+    type: Boolean,
+    default: true,
+  },
+  // 禁用组件（仅查看文件）
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  // 拖动排序
+  drag: {
     type: Boolean,
     default: true,
   },
@@ -74,7 +96,7 @@ const emit = defineEmits();
 const number = ref(0);
 const uploadList = ref([]);
 const baseUrl = import.meta.env.VITE_APP_BASE_API;
-const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + '/common/upload'); // 上传的图片服务器地址
+const uploadFileUrl = ref(import.meta.env.VITE_APP_BASE_API + props.action); // 上传文件服务器地址
 const headers = ref({ Authorization: 'Bearer ' + getToken() });
 const fileList = ref([]);
 const showTip = computed(() => props.isShowTip && (props.fileType || props.fileSize));
@@ -106,19 +128,18 @@ watch(
 function handleBeforeUpload(file) {
   // 校检文件类型
   if (props.fileType.length) {
-    let fileExtension = '';
-    if (file.name.lastIndexOf('.') > -1) {
-      fileExtension = file.name.slice(file.name.lastIndexOf('.') + 1);
-    }
-    const isTypeOk = props.fileType.some((type) => {
-      if (file.type.indexOf(type) > -1) return true;
-      if (fileExtension && fileExtension.indexOf(type) > -1) return true;
-      return false;
-    });
+    const fileName = file.name.split('.');
+    const fileExt = fileName[fileName.length - 1];
+    const isTypeOk = props.fileType.indexOf(fileExt) >= 0;
     if (!isTypeOk) {
-      proxy.$modal.msgError(`文件格式不正确, 请上传${props.fileType.join('/')}格式文件!`);
+      proxy.$modal.msgError(`文件格式不正确，请上传${props.fileType.join('/')}格式文件!`);
       return false;
     }
+  }
+  // 校检文件名是否包含特殊字符
+  if (file.name.includes(',')) {
+    proxy.$modal.msgError('文件名不正确，不能包含英文逗号!');
+    return false;
   }
   // 校检文件大小
   if (props.fileSize) {
@@ -141,17 +162,20 @@ function handleExceed() {
 // 上传失败
 function handleUploadError(err) {
   proxy.$modal.msgError('上传文件失败');
+  proxy.$modal.closeLoading();
 }
 
 // 上传成功回调
 function handleUploadSuccess(res, file) {
-  uploadList.value.push({ name: res.fileName, url: res.fileName });
-  if (uploadList.value.length === number.value) {
-    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
-    uploadList.value = [];
-    number.value = 0;
-    emit('update:modelValue', listToString(fileList.value));
+  if (res.code === 200) {
+    uploadList.value.push({ name: res.fileName, url: res.fileName });
+    uploadedSuccessfully();
+  } else {
+    number.value--;
     proxy.$modal.closeLoading();
+    proxy.$modal.msgError(res.msg);
+    proxy.$refs.fileUpload.handleRemove(file);
+    uploadedSuccessfully();
   }
 }
 
@@ -161,12 +185,24 @@ function handleDelete(index) {
   emit('update:modelValue', listToString(fileList.value));
 }
 
+// 上传结束处理
+function uploadedSuccessfully() {
+  if (number.value > 0 && uploadList.value.length === number.value) {
+    fileList.value = fileList.value.filter((f) => f.url !== undefined).concat(uploadList.value);
+    uploadList.value = [];
+    number.value = 0;
+    emit('update:modelValue', listToString(fileList.value));
+    proxy.$modal.closeLoading();
+  }
+}
+
 // 获取文件名称
 function getFileName(name) {
+  // 如果是url那么取最后的名字 如果不是直接返回
   if (name.lastIndexOf('/') > -1) {
     return name.slice(name.lastIndexOf('/') + 1);
   } else {
-    return '';
+    return name;
   }
 }
 
@@ -175,15 +211,36 @@ function listToString(list, separator) {
   let strs = '';
   separator = separator || ',';
   for (let i in list) {
-    if (undefined !== list[i].url) {
+    if (list[i].url) {
       strs += list[i].url + separator;
     }
   }
   return strs != '' ? strs.substr(0, strs.length - 1) : '';
 }
+
+// 初始化拖拽排序
+onMounted(() => {
+  if (props.drag && !props.disabled) {
+    nextTick(() => {
+      const element = proxy.$refs.uploadFileList?.$el || proxy.$refs.uploadFileList;
+      Sortable.create(element, {
+        ghostClass: 'file-upload-darg',
+        onEnd: (evt) => {
+          const movedItem = fileList.value.splice(evt.oldIndex, 1)[0];
+          fileList.value.splice(evt.newIndex, 0, movedItem);
+          emit('update:modelValue', listToString(fileList.value));
+        },
+      });
+    });
+  }
+});
 </script>
 
 <style scoped lang="scss">
+.file-upload-darg {
+  opacity: 0.5;
+  background: #c8ebfb;
+}
 .upload-file-uploader {
   margin-bottom: 5px;
 }
@@ -192,6 +249,7 @@ function listToString(list, separator) {
   line-height: 2;
   margin-bottom: 10px;
   position: relative;
+  transition: none !important;
 }
 .upload-file-list .ele-upload-list__item-content {
   display: flex;

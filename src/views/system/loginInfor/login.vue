@@ -179,7 +179,7 @@ const data = reactive({
   btnLoading: false, //登录按钮标识符
   interval: null, // 短信验证码获取定时器
   passwordInvisible: true, //密码框右侧图标展示标识符
-  passwordType: 'password', //密码框展示密码类型
+  passwordType: '', //密码框展示密码类型
 });
 
 const load = () => {
@@ -339,29 +339,10 @@ const userRegistration = () => {
  * 跳转回登录平台
  */
 const jumpToLoginPlatform = async () => {
-  let type = null;
   const to = await userStore.getOtherPlatformsParameter(); //前往平台参数
   await userStore.deleteOtherPlatformsParameter(); //删除参数
   if (to.type && to.callback) {
-    type = to.type;
-    if (type) {
-      let callback = decodeURIComponent(to.callback);
-      let indexValue = callback.indexOf('?');
-      const token = userStore.token;
-      let tokenType = '?token=';
-      if (indexValue != -1) {
-        tokenType = '&token=';
-      }
-      switch (type) {
-        case 'h5-vp':
-          window.open(callback + tokenType + token, '_top');
-          break;
-        case 'web-vp':
-        case 'web-dm':
-          window.open(callback + tokenType + token, '_top');
-          break;
-      }
-    }
+    userStore.goToAnotherPlatform(to);
   } else {
     router.push({ path: data.redirect || '/' }).catch(() => {});
   }
@@ -386,7 +367,7 @@ load();
   box-sizing: border-box;
   background-size: cover;
   border-radius: 6px;
-  background: #ffffff;
+  background-color: #ffffff;
   padding: 25px 25px 5px 25px;
 }
 

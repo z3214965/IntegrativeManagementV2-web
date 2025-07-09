@@ -87,7 +87,7 @@ export const constantRoutes = [
     redirect: 'noredirect',
     children: [
       {
-        path: 'profile',
+        path: 'profile/:activeTab?',
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' },
@@ -147,7 +147,7 @@ export const dynamicRoutes = [
     permissions: ['monitor:job:list'],
     children: [
       {
-        path: 'index',
+        path: 'index/:jobId(\\d+)',
         component: () => import('@/views/monitor/job/log'),
         name: 'JobLog',
         meta: { title: '调度日志', activeMenu: '/monitor/job' },
@@ -176,9 +176,8 @@ const router = createRouter({
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition;
-    } else {
-      return { top: 0 };
     }
+    return { top: 0 };
   },
 });
 
