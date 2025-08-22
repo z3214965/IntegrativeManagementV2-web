@@ -85,7 +85,7 @@
                   <el-switch v-model="scope.row.status" active-value="0" inactive-value="1" @change="handleStatusChange(scope.row)"></el-switch>
                 </template>
               </el-table-column>
-                <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns.createTime.visible" width="160"></el-table-column>
+              <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns.createTime.visible" width="160">
                 <template #default="scope">
                   <span>{{ parseTime(scope.row.createTime) }}</span>
                 </template>
@@ -130,6 +130,7 @@
                 :props="{ value: 'id', label: 'label', children: 'children' }"
                 value-key="id"
                 placeholder="请选择归属部门"
+                clearable
                 check-strictly
               />
             </el-form-item>
@@ -292,8 +293,8 @@ const columns = ref({
   deptName: { label: '部门', visible: true },
   phonenumber: { label: '手机号码', visible: true },
   status: { label: '状态', visible: true },
-  createTime: { label: '创建时间', visible: true }
-})
+  createTime: { label: '创建时间', visible: true },
+});
 
 const data = reactive({
   form: {},

@@ -3,8 +3,8 @@ import path from 'path';
 import createVitePlugins from './vite/plugins';
 
 // const baseUrl = 'http://117.72.127.218:5001'; // 后端接口
-const baseUrl = 'http://localhost:5001'; // 后端接口
-// const baseUrl = 'http://47.96.137.124:5001'; // 后端接口
+// const baseUrl = 'http://localhost:5001'; // 后端接口
+const baseUrl = 'http://47.96.137.124:5001'; // 后端接口
 // const baseUrl = 'https://im.dilutech.com/prod-api'; // 后端接口
 
 // https://vitejs.dev/config/
