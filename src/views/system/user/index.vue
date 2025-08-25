@@ -219,6 +219,8 @@
         :disabled="upload.isUploading"
         :on-progress="handleFileUploadProgress"
         :on-success="handleFileSuccess"
+        :on-change="handleFileChange"
+        :on-remove="handleFileRemove"
         :auto-upload="false"
         drag
       >
@@ -483,6 +485,7 @@ function handleSelectionChange(selection) {
 function handleImport() {
   upload.title = '用户导入';
   upload.open = true;
+  upload.selectedFile = null;
 }
 
 /** 下载模板操作 */
@@ -493,6 +496,16 @@ function importTemplate() {
 /**文件上传中处理 */
 const handleFileUploadProgress = (event, file, fileList) => {
   upload.isUploading = true;
+};
+
+/** 文件选择处理 */
+const handleFileChange = (file, fileList) => {
+  upload.selectedFile = file;
+};
+
+/** 文件删除处理 */
+const handleFileRemove = (file, fileList) => {
+  upload.selectedFile = null;
 };
 
 /** 文件上传成功处理 */
