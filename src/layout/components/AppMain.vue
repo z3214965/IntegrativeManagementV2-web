@@ -42,8 +42,15 @@ function addIframe() {
   overflow: hidden;
 }
 
+.fixed-header + .app-main {
+  overflow-y: auto;
+  scrollbar-gutter: auto;
+  height: calc(100vh - 50px);
+  min-height: 0px;
+}
+
 .app-main:has(.copyright) {
-  padding-bottom: 36px;
+  margin-bottom: 36px;
 }
 
 .fixed-header + .app-main {
@@ -57,18 +64,14 @@ function addIframe() {
   }
 
   .fixed-header + .app-main {
-    padding-top: 84px;
+    margin-top: 84px;
+    height: calc(100vh - 84px);
+    min-height: 0px;
   }
 }
 </style>
 
 <style lang="scss">
-// fix css style bug in open el-dialog
-.el-popup-parent--hidden {
-  .fixed-header {
-    padding-right: 6px;
-  }
-}
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

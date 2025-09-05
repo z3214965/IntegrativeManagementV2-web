@@ -521,6 +521,11 @@ const handleFileSuccess = (response, file, fileList) => {
 
 /** 提交上传文件 */
 function submitFileForm() {
+  const file = upload.selectedFile;
+  if (!file || file.length === 0 || (!file.name.toLowerCase().endsWith('.xls') && !file.name.toLowerCase().endsWith('.xlsx'))) {
+    proxy.$modal.msgError('请选择后缀为 “xls”或“xlsx”的文件。');
+    return;
+  }
   proxy.$refs['uploadRef'].submit();
 }
 
