@@ -87,40 +87,42 @@ const dateChangeFun = () => {
  */
 const load = (startDate, endDate, dateTitle) => {
   getUserRecord().then((res) => {
-    let dateArr = [dateTitle];
-    let userArr = JSON.parse(res.data.users) || []; //用户
-    let datasetArr = JSON.parse(res.data.datasets) || []; //数据管理数据
-    let sceneArr = JSON.parse(res.data.scenes) || []; //场景数据
+    if (res.data.datasets && res.data.scenes) {
+      let dateArr = [dateTitle];
+      let userArr = JSON.parse(res.data.users) || []; //用户
+      let datasetArr = JSON.parse(res.data.datasets) || []; //数据管理数据
+      let sceneArr = JSON.parse(res.data.scenes) || []; //场景数据
 
-    data.tableData = dateArr.map((v) => {
-      let date = v; //时间
-      let register = 0; //注册用户数
-      let uploading = 0; //上传用户数
-      let establish = 0; //创建场景用户数
-      let visit = 0; //场景访问数
-      userArr.forEach((item) => {
-        let userDate = new Date(item.createTime);
-        if (startDate <= userDate && userDate <= endDate) {
-          register++;
-        }
+      data.tableData = dateArr.map((v) => {
+        let date = v; //时间
+        let register = 0; //注册用户数
+        let uploading = 0; //上传用户数
+        let establish = 0; //创建场景用户数
+        let visit = 0; //场景访问数
+        userArr.forEach((item) => {
+          let userDate = new Date(item.createTime);
+          if (startDate <= userDate && userDate <= endDate) {
+            register++;
+          }
+        });
+        datasetArr['code'] != 500 &&
+          datasetArr.forEach((item) => {
+            let datasetDate = new Date(item.createTime);
+            if (startDate <= datasetDate && datasetDate <= endDate) {
+              uploading++;
+            }
+          });
+        sceneArr['code'] != 500 &&
+          sceneArr.forEach((item) => {
+            let sceneDate = new Date(item.createTime);
+            if (startDate <= sceneDate && sceneDate <= endDate) {
+              establish++;
+              visit += item.viewCount || 1; //1为假值 需更改
+            }
+          });
+        return { date, register, uploading, establish, visit };
       });
-      datasetArr['code'] != 500 &&
-        datasetArr.forEach((item) => {
-          let datasetDate = new Date(item.createTime);
-          if (startDate <= datasetDate && datasetDate <= endDate) {
-            uploading++;
-          }
-        });
-      sceneArr['code'] != 500 &&
-        sceneArr.forEach((item) => {
-          let sceneDate = new Date(item.createTime);
-          if (startDate <= sceneDate && sceneDate <= endDate) {
-            establish++;
-            visit += item.viewCount || 1; //1为假值 需更改
-          }
-        });
-      return { date, register, uploading, establish, visit };
-    });
+    }
   });
 };
 

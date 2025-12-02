@@ -37,7 +37,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-register-footer">
-      <span>Copyright © 2014-2025 dz All Rights Reserved.</span>
+      <span>{{ footerContent }}</span>
     </div>
   </div>
 </template>
@@ -45,8 +45,10 @@
 <script setup>
 import { ElMessageBox } from 'element-plus';
 import { getCodeImg, register } from '@/api/login';
+import defaultSettings from '@/settings';
 
 const title = import.meta.env.VITE_APP_TITLE;
+const footerContent = defaultSettings.footerContent;
 const router = useRouter();
 const { proxy } = getCurrentInstance();
 const registerForm = ref({

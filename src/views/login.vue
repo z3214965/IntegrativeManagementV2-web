@@ -33,7 +33,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2014-2025 dz All Rights Reserved.</span>
+      <span>{{ footerContent }}</span>
     </div>
   </div>
 </template>
@@ -43,8 +43,10 @@ import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
 import { encrypt, decrypt } from '@/utils/jsencrypt';
 import useUserStore from '@/store/modules/user';
+import defaultSettings from '@/settings';
 
 const title = import.meta.env.VITE_APP_TITLE;
+const footerContent = defaultSettings.footerContent;
 const userStore = useUserStore();
 const route = useRoute();
 const router = useRouter();
