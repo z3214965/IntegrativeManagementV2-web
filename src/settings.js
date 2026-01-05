@@ -50,5 +50,5 @@ export default {
   /**
    * 底部版权文本内容
    */
-  footerContent: 'Copyright © 2018-2025 RuoYi. All Rights Reserved.',
+  footerContent: 'Copyright © 2024-2026 DiorsZhang. All Rights Reserved.',
 };
