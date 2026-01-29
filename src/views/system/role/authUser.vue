@@ -126,7 +126,7 @@ function cancelAuthUser(row) {
     .catch(() => {});
 }
 /** 批量取消授权按钮操作 */
-function cancelAuthUserAll(row) {
+function cancelAuthUserAll() {
   const roleId = queryParams.roleId;
   const uIds = userIds.value.join(',');
   proxy.$modal

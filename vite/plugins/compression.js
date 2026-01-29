@@ -10,7 +10,7 @@ export default function createCompression(env) {
         compression({
           ext: '.gz',
           deleteOriginFile: false,
-        })
+        }),
       );
     }
     if (compressList.includes('brotli')) {
@@ -19,7 +19,7 @@ export default function createCompression(env) {
           ext: '.br',
           algorithm: 'brotliCompress',
           deleteOriginFile: false,
-        })
+        }),
       );
     }
   }

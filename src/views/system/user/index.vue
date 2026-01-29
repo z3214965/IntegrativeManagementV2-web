@@ -230,7 +230,7 @@
           <div class="el-upload__tip text-center">
             <div class="el-upload__tip"><el-checkbox v-model="upload.updateSupport" />是否更新已经存在的用户数据</div>
             <span>仅允许导入xls、xlsx格式文件。</span>
-            <el-link type="primary" :underline="false" style="font-size: 12px; vertical-align: baseline" @click="importTemplate">下载模板</el-link>
+            <el-link type="primary" underline="never" style="font-size: 12px; vertical-align: baseline" @click="importTemplate">下载模板</el-link>
           </div>
         </template>
       </el-upload>
@@ -467,7 +467,7 @@ function handleResetPwd(row) {
       },
     })
     .then(({ value }) => {
-      resetUserPwd(row.userId, value).then((response) => {
+      resetUserPwd(row.userId, value).then(() => {
         proxy.$modal.msgSuccess('修改成功，新密码是：' + value);
       });
     })
@@ -578,7 +578,7 @@ function handleUpdate(row) {
     form.value.roleIds = response.roleIds;
     open.value = true;
     title.value = '修改用户';
-    form.password = '';
+    form.value.password = ""
   });
 }
 
@@ -587,13 +587,13 @@ function submitForm() {
   proxy.$refs['userRef'].validate((valid) => {
     if (valid) {
       if (form.value.userId != undefined) {
-        updateUser(form.value).then((response) => {
+        updateUser(form.value).then(() => {
           proxy.$modal.msgSuccess('修改成功');
           open.value = false;
           getList();
         });
       } else {
-        addUser(form.value).then((response) => {
+        addUser(form.value).then(() => {
           proxy.$modal.msgSuccess('新增成功');
           open.value = false;
           getList();
