@@ -27,6 +27,7 @@
   </div>
 </template>
 
+<!-- 废弃 -->
 <script setup name="DatumIndicator">
 import { getUserRecord } from '@/api/system/user.js';
 

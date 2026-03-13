@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <datum-indicator />
+    <div>首页内容</div>
   </div>
 </template>
 
