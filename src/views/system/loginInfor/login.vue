@@ -5,14 +5,7 @@
       <h3 class="title">账号登录</h3>
       <div class="login-select flex-box">
         <div class="activeBtn" :class="{ active: data.activeKey == 1 }" @click="data.activeKey = 1">手机验证登录</div>
-        <div
-          class="activeBtn"
-          :class="{ active: data.activeKey == 2 }"
-          @click="
-            data.activeKey = 2;
-            getCode();
-          "
-        >
+        <div class="activeBtn" :class="{ active: data.activeKey == 2 }" @click="data.activeKey = 2;getCode();" >
           账号密码登录
         </div>
       </div>
@@ -402,6 +395,7 @@ input::-webkit-inner-spin-button {
 }
 input[type='number'] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 .form {
   display: flex;
