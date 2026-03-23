@@ -24,6 +24,10 @@
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
+
+        <el-tooltip content="消息通知" effect="dark" placement="bottom">
+          <header-notice id="header-notice" class="right-menu-item hover-effect" />
+        </el-tooltip>
       </template>
 
       <el-dropdown @command="handleCommand" class="avatar-container right-menu-item hover-effect" trigger="hover">
@@ -38,6 +42,9 @@
             </router-link>
             <el-dropdown-item command="setLayout" v-if="settingsStore.showSettings">
               <span>布局设置</span>
+            </el-dropdown-item>
+            <el-dropdown-item command="lockScreen">
+                <span>锁定屏幕</span>
             </el-dropdown-item>
             <el-dropdown-item divided command="logout">
               <span>退出登录</span>
@@ -61,10 +68,15 @@ import SizeSelect from '@/components/SizeSelect';
 import HeaderSearch from '@/components/HeaderSearch';
 import useAppStore from '@/store/modules/app';
 import useUserStore from '@/store/modules/user';
+import useLockStore from '@/store/modules/lock'
 import useSettingsStore from '@/store/modules/settings';
+import HeaderNotice from './HeaderNotice'
 
+const route = useRoute()
+const router = useRouter()
 const appStore = useAppStore();
 const userStore = useUserStore();
+const lockStore = useLockStore()
 const settingsStore = useSettingsStore();
 
 function toggleSideBar() {
@@ -79,6 +91,9 @@ function handleCommand(command) {
     case 'logout':
       logout();
       break;
+    case "lockScreen":
+      lockScreen()
+      break
     default:
       break;
   }
@@ -101,6 +116,12 @@ function logout() {
 const emits = defineEmits(['setLayout']);
 function setLayout() {
   emits('setLayout');
+}
+
+function lockScreen() {
+  const currentPath = route.fullPath
+  lockStore.lockScreen(currentPath)
+  router.push('/lock')
 }
 
 async function toggleTheme(event) {
@@ -195,11 +216,6 @@ async function toggleTheme(event) {
     align-items: center;
     overflow: hidden;
     margin-left: 8px;
-  }
-
-  .errLog-container {
-    display: inline-block;
-    vertical-align: top;
   }
 
   .right-menu {

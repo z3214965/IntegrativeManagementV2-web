@@ -126,6 +126,7 @@ function animateSearch(el, isHide) {
       setTimeout(clear, DURATION)
     })
   }
+}
 
 // 刷新
 function refresh() {

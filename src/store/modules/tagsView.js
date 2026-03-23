@@ -1,3 +1,28 @@
+import cache from '@/plugins/cache';
+import useSettingsStore from '@/store/modules/settings';
+
+const PERSIST_KEY = 'tags-view-visited';
+
+function isPersistEnabled() {
+  return useSettingsStore().tagsViewPersist;
+}
+
+function saveVisitedViews(views) {
+  if (!isPersistEnabled()) return;
+  const toSave = views
+    .filter((v) => !(v.meta && v.meta.affix))
+    .map((v) => ({ path: v.path, fullPath: v.fullPath, name: v.name, title: v.title, query: v.query, meta: v.meta }));
+  cache.local.setJSON(PERSIST_KEY, toSave);
+}
+
+function loadVisitedViews() {
+  return cache.local.getJSON(PERSIST_KEY) || [];
+}
+
+function clearVisitedViews() {
+  cache.local.remove(PERSIST_KEY);
+}
+
 const useTagsViewStore = defineStore('tags-view', {
   state: () => ({
     visitedViews: [],
@@ -14,7 +39,7 @@ const useTagsViewStore = defineStore('tags-view', {
       this.iframeViews.push(
         Object.assign({}, view, {
           title: view.meta.title || 'no-name',
-        })
+        }),
       );
     },
     addVisitedView(view) {
@@ -22,7 +47,16 @@ const useTagsViewStore = defineStore('tags-view', {
       this.visitedViews.push(
         Object.assign({}, view, {
           title: view.meta.title || 'no-name',
-        })
+        }),
+      );
+      saveVisitedViews(this.visitedViews);
+    },
+    addAffixView(view) {
+      if (this.visitedViews.some((v) => v.path === view.path)) return;
+      this.visitedViews.unshift(
+        Object.assign({}, view, {
+          title: view.meta.title || 'no-name',
+        }),
       );
     },
     addCachedView(view) {
@@ -50,6 +84,7 @@ const useTagsViewStore = defineStore('tags-view', {
           }
         }
         this.iframeViews = this.iframeViews.filter((item) => item.path !== view.path);
+        saveVisitedViews(this.visitedViews);
         resolve([...this.visitedViews]);
       });
     },
@@ -82,6 +117,7 @@ const useTagsViewStore = defineStore('tags-view', {
           return v.meta.affix || v.path === view.path;
         });
         this.iframeViews = this.iframeViews.filter((item) => item.path === view.path);
+        saveVisitedViews(this.visitedViews);
         resolve([...this.visitedViews]);
       });
     },
@@ -111,6 +147,7 @@ const useTagsViewStore = defineStore('tags-view', {
         const affixTags = this.visitedViews.filter((tag) => tag.meta.affix);
         this.visitedViews = affixTags;
         this.iframeViews = [];
+        clearVisitedViews();
         resolve([...this.visitedViews]);
       });
     },
@@ -148,6 +185,7 @@ const useTagsViewStore = defineStore('tags-view', {
           }
           return false;
         });
+        saveVisitedViews(this.visitedViews);
         resolve([...this.visitedViews]);
       });
     },
@@ -171,7 +209,15 @@ const useTagsViewStore = defineStore('tags-view', {
           }
           return false;
         });
+        saveVisitedViews(this.visitedViews);
         resolve([...this.visitedViews]);
+      });
+    },
+    // 恢复持久化的 tags
+    loadPersistedViews() {
+      const views = loadVisitedViews();
+      views.forEach((view) => {
+        this.addVisitedView(view);
       });
     },
   },
