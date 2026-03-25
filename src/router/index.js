@@ -27,21 +27,6 @@ import Layout from '@/layout';
 // 公共路由
 export const constantRoutes = [
   {
-    path: '/login',
-    component: () => import('@/views/system/loginInfor/login'),
-    hidden: true,
-  },
-  {
-    path: '/userReg',
-    component: () => import('@/views/system/loginInfor/userRegistration'),
-    hidden: true,
-  },
-  {
-    path: '/passWordRetrieve',
-    component: () => import('@/views/system/loginInfor/passWordRetrieve'),
-    hidden: true,
-  },
-  {
     path: '/redirect',
     component: Layout,
     hidden: true,
@@ -51,6 +36,11 @@ export const constantRoutes = [
         component: () => import('@/views/redirect/index.vue'),
       },
     ],
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/login'),
+    hidden: true,
   },
   {
     path: '/register',
