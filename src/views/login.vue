@@ -41,7 +41,8 @@
 <script setup>
 import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
-import { encrypt, decrypt } from '@/utils/jsencrypt';
+import { RSAEncrypt, RSADecrypt, AESEncrypt } from '@/utils/jsencrypt';
+import { getToken, removeToken } from '@/utils/auth';
 import useUserStore from '@/store/modules/user';
 import defaultSettings from '@/settings';
 
@@ -86,7 +87,7 @@ function handleLogin() {
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
       if (loginForm.value.rememberMe) {
         Cookies.set('username', loginForm.value.username, { expires: 30 });
-        Cookies.set('password', encrypt(loginForm.value.password), { expires: 30 });
+        Cookies.set('password', RSAEncrypt(loginForm.value.password), { expires: 30 });
         Cookies.set('rememberMe', loginForm.value.rememberMe, { expires: 30 });
       } else {
         // 否则移除
@@ -97,15 +98,34 @@ function handleLogin() {
       // 调用action的登录方法
       userStore
         .login(loginForm.value)
-        .then(() => {
-          const query = route.query;
-          const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
-            if (cur !== 'redirect') {
-              acc[cur] = query[cur];
-            }
-            return acc;
-          }, {});
-          router.push({ path: redirect.value || '/', query: otherQueryParams });
+        .then(async () => {
+          if (redirect.value === "/index") {
+            const query = route.query;
+            const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+              if (cur !== 'redirect') {
+                acc[cur] = query[cur];
+              }
+              return acc;
+            }, {});
+            router.push({ path: redirect.value || '/', query: otherQueryParams });
+          } else {
+            // 解码重定向url
+            let realRedirect = decodeURIComponent(redirect.value)
+            // 获取token
+            const token = getToken();
+            // 删除token
+            removeToken()
+            // 加密token
+            const encryptToken = await AESEncrypt(token)
+            // 编码token
+            const encodeToken = encodeURIComponent(encryptToken)
+            // 拼接token
+            realRedirect += `?token=${encodeToken}`
+            // 跳转
+            // window.open(realRedirect, '_blank')
+            // window.location.href = realRedirect  // 用户可以后退
+            window.location.replace(realRedirect)  // 用户不可以后退
+          }
         })
         .catch(() => {
           loading.value = false;
@@ -132,7 +152,7 @@ function getCookie() {
   const rememberMe = Cookies.get('rememberMe');
   loginForm.value = {
     username: username === undefined ? loginForm.value.username : username,
-    password: password === undefined ? loginForm.value.password : decrypt(password),
+    password: password === undefined ? loginForm.value.password : RSADecrypt(password),
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 }

@@ -35,6 +35,9 @@ router.beforeEach(async (to, from, next) => {
       useUserStore().setOtherPlatformsParameter(to.query);
       if (token) {
         useUserStore().goToAnotherPlatform(to.query);
+        // NProgress.done();
+        // next(false);
+        console.log(11111);
         return;
       }
     }
@@ -67,6 +70,9 @@ router.beforeEach(async (to, from, next) => {
             if (!adminInfo) {
               ElMessage.error('无权限访问！！');
               location.href = 'https://www.baidu.com/';
+              // NProgress.done();
+              // next(false);
+              console.log(222222);
               return;
             }
             await usePermissionStore()
@@ -81,11 +87,12 @@ router.beforeEach(async (to, from, next) => {
                 next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
               });
           })
-          .catch((err) => {
-            useUserStore()
+          .catch(async (err) => {
+            await useUserStore()
               .logOut()
               .then(() => {
                 ElMessage.error(err);
+                NProgress.done();
                 next({ path: '/' });
               });
           });

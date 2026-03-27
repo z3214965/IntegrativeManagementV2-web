@@ -99,22 +99,22 @@ const useUserStore = defineStore('user', {
       });
     },
 
-    //获取从其他平台跳转来存储的参数
+    //获取从其他平台跳转来存储的参数 TODO：废弃
     getOtherPlatformsParameter() {
       return JSON.parse(sessionStorage.getItem(DL_HREF) || '{}');
     },
 
-    //设置从其他平台跳转来存储参数
+    //设置从其他平台跳转来存储参数 TODO：废弃
     setOtherPlatformsParameter(data) {
       sessionStorage.setItem(DL_HREF, JSON.stringify(data));
     },
 
-    //删除从其他平台跳转来存储的参数
+    //删除从其他平台跳转来存储的参数 TODO：废弃
     deleteOtherPlatformsParameter() {
       sessionStorage.removeItem(DL_HREF);
     },
 
-    //跳转至其他平台
+    //跳转至其他平台 TODO：废弃
     goToAnotherPlatform(to) {
       const type = to.type;
       const callback = decodeURIComponent(to.callback);
