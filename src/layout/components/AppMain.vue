@@ -54,7 +54,8 @@ function addIframe() {
 }
 
 .fixed-header + .app-main {
-  padding-top: 50px;
+  /* zyy by 2023-03-30 */
+  // padding-top: 50px;
 }
 
 .hasTagsView {
