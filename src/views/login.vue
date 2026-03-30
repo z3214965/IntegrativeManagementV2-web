@@ -99,16 +99,7 @@ function handleLogin() {
       userStore
         .login(loginForm.value)
         .then(async () => {
-          if (redirect.value === "/index") {
-            const query = route.query;
-            const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
-              if (cur !== 'redirect') {
-                acc[cur] = query[cur];
-              }
-              return acc;
-            }, {});
-            router.push({ path: redirect.value || '/', query: otherQueryParams });
-          } else {
+          if (redirect.value && redirect.value.startsWith('http')) {
             // 解码重定向url
             let realRedirect = decodeURIComponent(redirect.value)
             // 获取token
@@ -125,6 +116,15 @@ function handleLogin() {
             // window.open(realRedirect, '_blank')
             // window.location.href = realRedirect  // 用户可以后退
             window.location.replace(realRedirect)  // 用户不可以后退
+          } else {
+            const query = route.query;
+            const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+              if (cur !== 'redirect') {
+                acc[cur] = query[cur];
+              }
+              return acc;
+            }, {});
+            router.push({ path: redirect.value || '/', query: otherQueryParams });
           }
         })
         .catch(() => {

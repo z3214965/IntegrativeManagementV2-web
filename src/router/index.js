@@ -167,7 +167,7 @@ export const dynamicRoutes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.VITE_APP_ENV === 'production' ? import.meta.env.VITE_APP_PUBLIC_PATH : '/'),
   routes: constantRoutes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {

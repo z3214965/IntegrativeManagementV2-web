@@ -107,7 +107,7 @@ function logout() {
   })
     .then(() => {
       userStore.logOut().then(() => {
-        location.href = '/index';
+        location.href = import.meta.env.VITE_APP_ENV === 'production' ? import.meta.env.VITE_APP_PUBLIC_PATH + '/' : '/index';
       });
     })
     .catch(() => {});

@@ -141,7 +141,7 @@
 import Cookies from 'js-cookie';
 import { getALYCode } from '@/api/tool/gen';
 import { getCodeImg } from '@/api/login';
-import { decrypt } from '@/utils/jsencrypt';
+import { RSADecrypt } from '@/utils/jsencrypt';
 import useUserStore from '@/store/modules/user';
 
 const route = useRoute();
@@ -248,7 +248,7 @@ const getCookie = () => {
   const rememberMe = Cookies.get('rememberMe');
   data.loginForm = {
     username: username === undefined ? data.loginForm.username : username,
-    password: password === undefined ? data.loginForm.password : decrypt(password),
+    password: password === undefined ? data.loginForm.password : RSADecrypt(password),
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 };
