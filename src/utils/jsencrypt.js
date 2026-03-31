@@ -1,7 +1,9 @@
-import JSEncrypt from 'jsencrypt/bin/jsencrypt.min';
-
 // 密钥对生成 http://web.chacuo.net/netrsakeypair
 
+import JSEncrypt from 'jsencrypt/bin/jsencrypt.min';
+import CryptoJS from 'crypto-js';
+
+//#region JSEncrypt
 const publicKey = 'MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANQSbrmSLT1TTS7mT+GMN0tef9Ne8eJe\n' + 'mke+xDcv9l8LU2aRlSrKiqXR/Y1Dv6t10O1g3nWsBTvoIBvmIJtjMh0CAwEAAQ==';
 
 const privateKey =
@@ -19,7 +21,7 @@ const privateKey =
  * @param {string} plaintext 明文
  * @returns {string} 密文
  */
-export function RSAEncrypt(plaintext) {
+export function JSEncryptRSAEnc(plaintext) {
   const encryptor = new JSEncrypt();
   encryptor.setPublicKey(publicKey); // 设置公钥
   return encryptor.encrypt(plaintext); // 对数据进行加密
@@ -30,21 +32,23 @@ export function RSAEncrypt(plaintext) {
  * @param {string} encryptedData 密文
  * @returns {string} 明文
  */
-export function RSADecrypt(encryptedData) {
+export function JSEncryptRSADec(encryptedData) {
   const encryptor = new JSEncrypt();
   encryptor.setPrivateKey(privateKey); // 设置私钥
   return encryptor.decrypt(encryptedData); // 对数据进行解密
 }
+//#endregion
 
-// Web Crypto加密配置
-const cryptoConfig = {
+//#region WebCrypto
+// WebCrypto加密配置
+const webCryptoConfig = {
   key: import.meta.env.VITE_CRYPTO_KEY,
   algorithm: 'AES-GCM',
   ivLength: 12,
 };
 
 /**
- * 字符串转 ArrayBuffer（Web Crypto专用）
+ * 字符串转 ArrayBuffer
  * @param {string} str
  * @returns {ArrayBuffer}
  */
@@ -85,24 +89,26 @@ function base64Decode(str) {
 }
 
 /**
- * 生成AES密钥(Web Crypto)
+ * 生成AES密钥(WebCrypto)
  * @returns {Promise<CryptoKey>} 密钥
+ * @description 只支持 HTTPS / localhost
  */
-async function generateAesKey() {
-  const keyBuffer = stringToArrayBuffer(cryptoConfig.key);
-  return crypto.subtle.importKey('raw', keyBuffer, cryptoConfig.algorithm, true, ['encrypt', 'decrypt']);
+async function webCryptoAesKey() {
+  const keyBuffer = stringToArrayBuffer(webCryptoConfig.key);
+  return crypto.subtle.importKey('raw', keyBuffer, webCryptoConfig.algorithm, true, ['encrypt', 'decrypt']);
 }
 
 /**
- * AES加密(Web Crypto)
+ * AES加密(WebCrypto)
  * @param {string} plaintext 明文
  * @returns {string} 密文
+ * @description 只支持 HTTPS / localhost
  */
-export async function AESEncrypt(plaintext) {
-  const key = await generateAesKey();
-  const iv = crypto.getRandomValues(new Uint8Array(cryptoConfig.ivLength));
+export async function webCryptoAesEnc(plaintext) {
+  const key = await webCryptoAesKey();
+  const iv = crypto.getRandomValues(new Uint8Array(webCryptoConfig.ivLength));
   const data = stringToArrayBuffer(plaintext);
-  const encrypted = await crypto.subtle.encrypt({ name: cryptoConfig.algorithm, iv }, key, data);
+  const encrypted = await crypto.subtle.encrypt({ name: webCryptoConfig.algorithm, iv }, key, data);
   const result = new Uint8Array(iv.length + encrypted.byteLength);
   result.set(iv, 0);
   result.set(new Uint8Array(encrypted), iv.length);
@@ -110,15 +116,56 @@ export async function AESEncrypt(plaintext) {
 }
 
 /**
- * AES解密(Web Crypto)
+ * AES解密(WebCrypto)
+ * @param {string} encryptedStr 密文
+ * @returns {string} 明文
+ * @description 只支持 HTTPS / localhost
+ */
+export async function webCryptoAesDec(encryptedStr) {
+  const key = await webCryptoAesKey();
+  const encryptedBuffer = base64Decode(encryptedStr);
+  const iv = encryptedBuffer.slice(0, webCryptoConfig.ivLength);
+  const data = encryptedBuffer.slice(webCryptoConfig.ivLength);
+  const decrypted = await crypto.subtle.decrypt({ name: webCryptoConfig.algorithm, iv }, key, data);
+  return arrayBufferToString(decrypted);
+}
+//#endregion
+
+//#region crypto-js
+// crypto-js加密配置
+const cryptoJsConfig = {
+  key: import.meta.env.VITE_CRYPTO_KEY,
+  algorithm: 'AES-CBC',
+  iv: import.meta.env.VITE_CRYPTO_JS_IV,
+};
+
+/**
+ * AES加密(crypto-js)
+ * @param {string} plaintext 明文
+ * @returns {string} 密文
+ */
+export function CryptoJSAESEnc(plaintext) {
+  const utf8 = CryptoJS.enc.Utf8;
+  const result = CryptoJS.AES.encrypt(utf8.parse(plaintext), utf8.parse(cryptoJsConfig.key), {
+    iv: utf8.parse(cryptoJsConfig.iv),
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return result.toString();
+}
+
+/**
+ * AES解密(crypto-js)
  * @param {string} encryptedStr 密文
  * @returns {string} 明文
  */
-export async function AESDecrypt(encryptedStr) {
-  const key = await generateAesKey();
-  const encryptedBuffer = base64Decode(encryptedStr);
-  const iv = encryptedBuffer.slice(0, cryptoConfig.ivLength);
-  const data = encryptedBuffer.slice(cryptoConfig.ivLength);
-  const decrypted = await crypto.subtle.decrypt({ name: cryptoConfig.algorithm, iv }, key, data);
-  return arrayBufferToString(decrypted);
+export function CryptoJSAESDec(encryptedStr) {
+  const utf8 = CryptoJS.enc.Utf8;
+  const result = CryptoJS.AES.decrypt(encryptedStr, utf8.parse(cryptoJsConfig.key), {
+    iv: utf8.parse(cryptoJsConfig.iv),
+    mode: CryptoJS.mode.CBC,
+    padding: CryptoJS.pad.Pkcs7,
+  });
+  return result.toString(utf8);
 }
+//#endregion

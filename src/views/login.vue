@@ -41,7 +41,7 @@
 <script setup>
 import { getCodeImg } from '@/api/login';
 import Cookies from 'js-cookie';
-import { RSAEncrypt, RSADecrypt, AESEncrypt } from '@/utils/jsencrypt';
+import { JSEncryptRSAEnc, JSEncryptRSADec, CryptoJSAESEnc } from '@/utils/jsencrypt';
 import { getToken, removeToken } from '@/utils/auth';
 import useUserStore from '@/store/modules/user';
 import defaultSettings from '@/settings';
@@ -87,7 +87,7 @@ function handleLogin() {
       // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
       if (loginForm.value.rememberMe) {
         Cookies.set('username', loginForm.value.username, { expires: 30 });
-        Cookies.set('password', RSAEncrypt(loginForm.value.password), { expires: 30 });
+        Cookies.set('password', JSEncryptRSAEnc(loginForm.value.password), { expires: 30 });
         Cookies.set('rememberMe', loginForm.value.rememberMe, { expires: 30 });
       } else {
         // 否则移除
@@ -107,7 +107,7 @@ function handleLogin() {
             // 删除token
             removeToken()
             // 加密token
-            const encryptToken = await AESEncrypt(token)
+            const encryptToken = CryptoJSAESEnc(token)
             // 编码token
             const encodeToken = encodeURIComponent(encryptToken)
             // 拼接token
@@ -152,7 +152,7 @@ function getCookie() {
   const rememberMe = Cookies.get('rememberMe');
   loginForm.value = {
     username: username === undefined ? loginForm.value.username : username,
-    password: password === undefined ? loginForm.value.password : RSADecrypt(password),
+    password: password === undefined ? loginForm.value.password : JSEncryptRSADec(password),
     rememberMe: rememberMe === undefined ? false : Boolean(rememberMe),
   };
 }
