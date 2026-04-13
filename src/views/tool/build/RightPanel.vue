@@ -18,7 +18,7 @@
               <el-option-group v-for="group in tagList" :key="group.label" :label="group.label">
                 <el-option v-for="item in group.options" :key="item.label" :label="item.label" :value="item.tagIcon">
                   <svg-icon class="node-icon" :icon-class="item.tagIcon" style="margin-right: 10px" />
-                  <span> {{ item.label }}</span>
+                  <span>{{ item.label }}</span>
                 </el-option>
               </el-option-group>
             </el-select>
@@ -118,8 +118,8 @@
           </el-form-item>
           <el-form-item v-if="activeData.tag === 'el-input-number'" label="按钮位置">
             <el-radio-group v-model="activeData['controls-position']">
-              <el-radio-button label=""> 默认 </el-radio-button>
-              <el-radio-button label="right"> 右侧 </el-radio-button>
+              <el-radio-button value=""> 默认 </el-radio-button>
+              <el-radio-button value="right"> 右侧 </el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="activeData.maxlength !== undefined" label="最多输入">
@@ -172,9 +172,9 @@
           </el-form-item>
           <el-form-item v-if="activeData['list-type'] !== undefined" label="列表类型">
             <el-radio-group v-model="activeData['list-type']" size="small">
-              <el-radio-button label="text"> text </el-radio-button>
-              <el-radio-button label="picture"> picture </el-radio-button>
-              <el-radio-button label="picture-card"> picture-card </el-radio-button>
+              <el-radio-button value="text"> text </el-radio-button>
+              <el-radio-button value="picture"> picture </el-radio-button>
+              <el-radio-button value="picture-card"> picture-card </el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="activeData.buttonText !== undefined" v-show="'picture-card' !== activeData['list-type']" label="按钮文字">
@@ -217,8 +217,8 @@
             <el-divider>选项</el-divider>
             <el-form-item label="数据类型">
               <el-radio-group v-model="activeData.dataType" size="small">
-                <el-radio-button label="dynamic"> 动态数据 </el-radio-button>
-                <el-radio-button label="static"> 静态数据 </el-radio-button>
+                <el-radio-button value="dynamic"> 动态数据 </el-radio-button>
+                <el-radio-button value="static"> 静态数据 </el-radio-button>
               </el-radio-group>
             </el-form-item>
 
@@ -250,8 +250,8 @@
 
           <el-form-item v-if="activeData.optionType !== undefined" label="选项样式">
             <el-radio-group v-model="activeData.optionType">
-              <el-radio-button label="default"> 默认 </el-radio-button>
-              <el-radio-button label="button"> 按钮 </el-radio-button>
+              <el-radio-button value="default"> 默认 </el-radio-button>
+              <el-radio-button value="button"> 按钮 </el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="activeData['active-color'] !== undefined" label="开启颜色">
@@ -289,9 +289,9 @@
             label="选项尺寸"
           >
             <el-radio-group v-model="activeData.size">
-              <el-radio-button label="large"> 较大 </el-radio-button>
-              <el-radio-button label="default"> 默认 </el-radio-button>
-              <el-radio-button label="small"> 较小 </el-radio-button>
+              <el-radio-button value="large"> large </el-radio-button>
+              <el-radio-button value="default"> default </el-radio-button>
+              <el-radio-button value="small"> small </el-radio-button>
             </el-radio-group>
           </el-form-item>
           <el-form-item v-if="activeData['show-word-limit'] !== undefined" label="输入统计">
@@ -382,16 +382,16 @@
           </el-form-item>
           <el-form-item label="表单尺寸">
             <el-radio-group v-model="formConf.size">
-              <el-radio-button label="large" value="较大" />
-              <el-radio-button label="default" value="默认" />
-              <el-radio-button label="small" value="较小" />
+              <el-radio-button label="large" value="large" />
+              <el-radio-button label="default" value="default" />
+              <el-radio-button label="small" value="small" />
             </el-radio-group>
           </el-form-item>
           <el-form-item label="标签对齐">
             <el-radio-group v-model="formConf.labelPosition">
-              <el-radio-button label="left" value="左对齐" />
-              <el-radio-button label="right" value="右对齐" />
-              <el-radio-button label="top" value="顶部对齐" />
+              <el-radio-button label="left" value="left" />
+              <el-radio-button label="right" value="right" />
+              <el-radio-button label="top" value="top" />
             </el-radio-group>
           </el-form-item>
           <el-form-item label="标签宽度">
