@@ -3,9 +3,9 @@ import path from 'path';
 import createVitePlugins from './vite/plugins';
 
 // 开发环境下注意rewrite配置
-// const baseUrl = 'http://localhost:5011';
+const baseUrl = 'http://localhost:5011';
 // const baseUrl = 'http://47.96.137.124:5011';
-const baseUrl = 'http://47.96.137.124:5010';
+// const baseUrl = 'http://47.96.137.124:5010';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
@@ -53,8 +53,8 @@ export default defineConfig(({ mode, command }) => {
         '/dev-api': {
           target: baseUrl,
           changeOrigin: true,
-          // rewrite: (p) => p.replace(/^\/dev-api/, '')
-          rewrite: (p) => p.replace(/^\/dev-api/, '/dz/ims/v1/'),
+          rewrite: (p) => p.replace(/^\/dev-api/, ''),
+          // rewrite: (p) => p.replace(/^\/dev-api/, '/dz/ims/v1/'),
         },
         // springdoc proxy
         '^/v3/api-docs/(.*)': {
