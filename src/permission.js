@@ -12,103 +12,62 @@ import usePermissionStore from '@/store/modules/permission';
 
 NProgress.configure({ showSpinner: false });
 
-const whiteList = ['/login', '/register', '/userReg', '/passWordRetrieve'];
+const whiteList = ['/login', '/register'];
 
 const isWhiteList = (path) => {
   return whiteList.some((pattern) => isPathMatch(pattern, path));
 };
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, from) => {
   NProgress.start();
-
-  useUserStore().deleteOtherPlatformsParameter();
-  let token = getToken();
-  if (to.path == '/login') {
-    //status代表退出登录跳转来的
-    if (to.query.status) {
-      delete to.query['status'];
-      await useUserStore().logOut();
-      next({ path: '/login', query: to.query });
-      return;
-    }
-    if (to.query.type && to.query.callback) {
-      useUserStore().setOtherPlatformsParameter(to.query);
-      if (token) {
-        useUserStore().goToAnotherPlatform(to.query);
-        // NProgress.done();
-        // next(false);
-        console.log(11111);
-        return;
-      }
-    }
-  }
-  if (token) {
+  if (getToken()) {
     to.meta.title && useSettingsStore().setTitle(to.meta.title);
     const isLock = useLockStore().isLock;
-    /* has token*/
     if (to.path === '/login') {
-      next({ path: '/' });
       NProgress.done();
-    } else if (isWhiteList(to.path)) {
-      next();
-    } else if (isLock && to.path !== '/lock') {
-      next({ path: '/lock' });
+      return { path: '/' };
+    }
+    if (isWhiteList(to.path)) {
+      return true;
+    }
+    if (isLock && to.path !== '/lock') {
       NProgress.done();
-    } else if (!isLock && to.path === '/lock') {
-      next({ path: '/' });
+      return { path: '/lock' };
+    }
+    if (!isLock && to.path === '/lock') {
       NProgress.done();
-    } else {
-      if (useUserStore().roles.length === 0) {
-        isRelogin.show = true;
-        // 判断当前用户是否已拉取完user_info信息
-        await useUserStore()
-          .getInfo()
-          .then(async (res) => {
-            isRelogin.show = false;
-            //判断是否是具有进入综合管理界面权限 无权限跳转至官网
-            let adminInfo = res.roles.some((v) => v.indexOf('admin') != -1);
-            if (!adminInfo) {
-              ElMessage.error('无权限访问！！');
-              location.href = 'https://www.baidu.com/';
-              // NProgress.done();
-              // next(false);
-              console.log(222222);
-              return;
-            }
-            await usePermissionStore()
-              .generateRoutes()
-              .then((accessRoutes) => {
-                // 根据roles权限生成可访问的路由表
-                accessRoutes.forEach((route) => {
-                  if (!isHttp(route.path)) {
-                    router.addRoute(route); // 动态添加可访问路由表
-                  }
-                });
-                next({ ...to, replace: true }); // hack方法 确保addRoutes已完成
-              });
-          })
-          .catch(async (err) => {
-            await useUserStore()
-              .logOut()
-              .then(() => {
-                ElMessage.error(err);
-                NProgress.done();
-                next({ path: '/' });
-              });
-          });
-      } else {
-        next();
+      return { path: '/' };
+    }
+    if (useUserStore().roles.length === 0) {
+      isRelogin.show = true;
+      try {
+        // 拉取user_info信息
+        await useUserStore().getInfo();
+        isRelogin.show = false;
+        // 根据roles权限生成可访问的路由
+        const accessRoutes = await usePermissionStore().generateRoutes();
+        accessRoutes.forEach((route) => {
+          if (!isHttp(route.path)) {
+            router.addRoute(route);
+          }
+        });
+        // 重新导航到目标路由，确保动态路由已注册
+        return { ...to, replace: true };
+      } catch (err) {
+        await useUserStore().logOut();
+        ElMessage.error(err);
+        return { path: '/' };
       }
     }
+    return true;
   } else {
     // 没有token
     if (isWhiteList(to.path)) {
       // 在免登录白名单，直接进入
-      next();
-    } else {
-      next(`/login?redirect=${to.fullPath}`); // 否则全部重定向到登录页
-      NProgress.done();
+      return true;
     }
+    NProgress.done();
+    return `/login?redirect=${to.fullPath}`; // 否则全部重定向到登录页
   }
 });
 
